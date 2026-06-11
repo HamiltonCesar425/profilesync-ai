@@ -1,6 +1,10 @@
 from fastapi import FastAPI
 
 from api.v1.profile_routes import router as profile_router
+from database.session import Base, engine
+from models import profile_model
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="ProfileSync AI API",
