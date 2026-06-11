@@ -1,9 +1,9 @@
 from domain.profile import Profile
 
 class ProfileRepository:
-    def __init__(sef) -> None:
+    def __init__(self) -> None:
         self._profiles: list[Profile] = []
-        self._next_id =1
+        self._next_id = 1
 
     def create(
             self,
