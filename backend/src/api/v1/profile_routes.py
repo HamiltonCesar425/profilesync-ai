@@ -1,56 +1,37 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
 
-from database.session import get_db
-from repositories.profile_repository import ProfileRepository
+from app.dependencies import get_profile_service
 from schemas.profile_schema import ProfileCreate, ProfileResponse
 from services.profile_service import ProfileService
 
 router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
 
-@router.post("/", response_model=ProfileResponse)
+@router.post("", response_model=ProfileResponse)
 def create_profile(
-    payload: ProfileCreate,
-    db: Session = Depends(get_db),
+    request: ProfileCreate,
+    service: ProfileService = Depends(get_profile_service),
 ):
-    repository = ProfileRepository(db)
-    service = ProfileService(repository)
-
-    profile = service.create_profile(
-        full_name=payload.full_name,
-        professional_title=payload.professional_title,
-        summary=payload.summary,
-        location=payload.location,
-        linkedin_url=payload.linkedin_url,
-        github_url=payload.github_url,
+    return service.create_profile(
+        full_name=request.full_name,
+        professional_title=request.professional_title,
+        summary=request.summary,
+        location=request.location,
+        linkedin_url=request.linkedin_url,
+        github_url=request.github_url,
     )
 
-    return profile
 
-
-@router.get("/", response_model=list[ProfileResponse])
-def list_profiles(db: Session = Depends(get_db)):
-    repository = ProfileRepository(db)
-    service = ProfileService(repository)
-
+@router.get("")
+def list_profiles(
+    service: ProfileService = Depends(get_profile_service),
+):
     return service.list_profiles()
 
 
-@router.get("/{profile_id}", response_model=ProfileResponse)
-def get_profile(
+@router.get("/{profile_id}")
+def get_profile_by_id(
     profile_id: int,
-    db: Session = Depends(get_db),
+    service: ProfileService = Depends(get_profile_service),
 ):
-    repository = ProfileRepository(db)
-    service = ProfileService(repository)
-
-    profile = service.get_profile(profile_id)
-
-    if profile is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Profile not found",
-        )
-
-    return profile
+    return service.get_profile(profile_id)
