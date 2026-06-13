@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from database.session import get_db
 from repositories.profile_repository import ProfileRepository
 from schemas.profile_schema import ProfileCreate, ProfileResponse
+from services.profile_service import ProfileService
 
 router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
@@ -14,8 +15,9 @@ def create_profile(
     db: Session = Depends(get_db),
 ):
     repository = ProfileRepository(db)
+    service = ProfileService(repository)
 
-    profile = repository.create(
+    profile = service.create_profile(
         full_name=payload.full_name,
         professional_title=payload.professional_title,
         summary=payload.summary,
@@ -24,15 +26,15 @@ def create_profile(
         github_url=payload.github_url,
     )
 
-    return ProfileResponse(**profile.__dict__)
+    return profile
 
 
 @router.get("/", response_model=list[ProfileResponse])
 def list_profiles(db: Session = Depends(get_db)):
     repository = ProfileRepository(db)
-    profiles = repository.list_all()
+    service = ProfileService(repository)
 
-    return [ProfileResponse(**profile.__dict__) for profile in profiles]
+    return service.list_profiles()
 
 
 @router.get("/{profile_id}", response_model=ProfileResponse)
@@ -41,7 +43,9 @@ def get_profile(
     db: Session = Depends(get_db),
 ):
     repository = ProfileRepository(db)
-    profile = repository.get_by_id(profile_id)
+    service = ProfileService(repository)
+
+    profile = service.get_profile(profile_id)
 
     if profile is None:
         raise HTTPException(
@@ -49,4 +53,4 @@ def get_profile(
             detail="Profile not found",
         )
 
-    return ProfileResponse(**profile.__dict__)
+    return profile
