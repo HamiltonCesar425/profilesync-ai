@@ -22,14 +22,14 @@ def create_profile(
     )
 
 
-@router.get("")
+@router.get("", response_model=list[ProfileResponse])
 def list_profiles(
     service: ProfileService = Depends(get_profile_service),
 ):
     return service.list_profiles()
 
 
-@router.get("/{profile_id}")
+@router.get("/{profile_id}", response_model=ProfileResponse)
 def get_profile_by_id(
     profile_id: int,
     service: ProfileService = Depends(get_profile_service),
