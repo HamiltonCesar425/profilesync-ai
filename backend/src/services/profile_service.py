@@ -1,6 +1,10 @@
-from repositories.profile_repository import ProfileRepository
-from domain.profile import Profile
+import logging
+
 from domain.exceptions import ProfileNotFoundError
+from domain.profile import Profile
+from repositories.profile_repository import ProfileRepository
+
+logger = logging.getLogger(__name__)
 
 
 class ProfileService:
@@ -16,8 +20,7 @@ class ProfileService:
         linkedin_url: str | None = None,
         github_url: str | None = None,
     ) -> Profile:
-
-        return self._repository.create(
+        profile = self._repository.create(
             full_name=full_name,
             professional_title=professional_title,
             summary=summary,
@@ -26,13 +29,21 @@ class ProfileService:
             github_url=github_url,
         )
 
+        logger.info("Profile created")
+
+        return profile
+
     def list_profiles(self) -> list[Profile]:
         return self._repository.list_all()
 
     def get_profile(self, profile_id: int) -> Profile:
+        logger.info(f"Searching profile id={profile_id}")
+
         profile = self._repository.get_by_id(profile_id)
 
         if profile is None:
             raise ProfileNotFoundError(f"Profile with id {profile_id} not found")
 
-        return self._repository.get_by_id(profile_id)
+        logger.info(f"Profile found id={profile_id}")
+
+        return profile

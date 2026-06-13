@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -7,6 +9,8 @@ from domain.exceptions import (
     ProfileNotFoundError,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def register_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(ProfileNotFoundError)
@@ -14,6 +18,11 @@ def register_error_handlers(app: FastAPI) -> None:
         request: Request,
         exc: ProfileNotFoundError,
     ) -> JSONResponse:
+        logger.warning(
+            "Profile not found",
+            extra={"error": "profile_not_found"},
+        )
+
         return JSONResponse(
             status_code=404,
             content={
@@ -27,6 +36,11 @@ def register_error_handlers(app: FastAPI) -> None:
         request: Request,
         exc: InvalidProfileDataError,
     ) -> JSONResponse:
+        logger.warning(
+            "Invalid profile data",
+            extra={"error": "invalid_profile_data"},
+        )
+
         return JSONResponse(
             status_code=400,
             content={
@@ -40,6 +54,11 @@ def register_error_handlers(app: FastAPI) -> None:
         request: Request,
         exc: DomainError,
     ) -> JSONResponse:
+        logger.warning(
+            "Domain error",
+            extra={"error": "domain_error"},
+        )
+
         return JSONResponse(
             status_code=400,
             content={
