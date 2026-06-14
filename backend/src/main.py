@@ -4,7 +4,7 @@ from api.v1.profile_routes import router as profile_router
 from app.error_handlers import register_error_handlers
 from core.logging_config import configure_logging
 from database.session import Base, engine
-from models import profile_model
+
 
 configure_logging()
 
