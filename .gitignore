@@ -5,3 +5,6 @@ __pycache__/
 .vscode/
 *.db
 .coverage
+.env.*
+*.env
+htmlcov/
