@@ -1,12 +1,16 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-from core.settings import settings
+from core.settings import DATABASE_URL, DATABASE_FILE
+
 
 engine = create_engine(
-    settings.database_url,
+    DATABASE_URL,
     connect_args={"check_same_thread": False},
 )
+print(f"USING DATABASE_URL: {DATABASE_URL}")
+print(f"USING DATABASE_FILE: {DATABASE_FILE}")
+print(f"DATABASE_FILE EXISTS: {DATABASE_FILE.exists()}")
 
 SessionLocal = sessionmaker(
     autocommit=False,
