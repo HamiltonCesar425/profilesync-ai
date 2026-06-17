@@ -47,3 +47,26 @@ class ProfileService:
         logger.info(f"Profile found id={profile_id}")
 
         return profile
+
+    def update_profile(
+        self,
+        profile_id: int,
+        full_name: str,
+        professional_title: str,
+        summary: str,
+        location: str | None = None,
+        linkedin_url: str | None = None,
+        github_url: str | None = None,
+    ) -> Profile | None:
+        return self._repository.update(
+            profile_id=profile_id,
+            full_name=full_name,
+            professional_title=professional_title,
+            summary=summary,
+            location=location,
+            linkedin_url=linkedin_url,
+            github_url=github_url,
+        )
+
+    def delete_profile(self, profile_id: int) -> bool:
+        return self._repository.delete(profile_id)

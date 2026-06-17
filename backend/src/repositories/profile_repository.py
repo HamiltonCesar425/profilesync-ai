@@ -47,6 +47,48 @@ class ProfileRepository:
 
         return self._to_domain(profile)
 
+    def update(
+        self,
+        profile_id: int,
+        full_name: str,
+        professional_title: str,
+        summary: str,
+        location: str | None = None,
+        linkedin_url: str | None = None,
+        github_url: str | None = None,
+    ) -> Profile | None:
+        profile_model = (
+            self.db.query(ProfileModel).filter(ProfileModel.id == profile_id).first()
+        )
+
+        if profile_model is None:
+            return None
+
+        profile_model.full_name = full_name
+        profile_model.professional_title = professional_title
+        profile_model.summary = summary
+        profile_model.location = location
+        profile_model.linkedin_url = linkedin_url
+        profile_model.github_url = github_url
+
+        self.db.commit()
+        self.db.refresh(profile_model)
+
+        return self._to_domain(profile_model)
+
+    def delete(self, profile_id: int) -> bool:
+        profile_model = (
+            self.db.query(ProfileModel).filter(ProfileModel.id == profile_id).first()
+        )
+
+        if profile_model is None:
+            return False
+
+        self.db.delete(profile_model)
+        self.db.commit()
+
+        return True
+
     @staticmethod
     def _to_domain(profile_model: ProfileModel) -> Profile:
         return Profile(
