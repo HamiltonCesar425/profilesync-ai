@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from database.session import Base
 
 
-class Use(Base):
+class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(
