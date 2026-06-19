@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 
 from api.v1.profile_routes import router as profile_router
+from api.v1.auth_routes import router as auth_router
 from app.error_handlers import register_error_handlers
 from core.logging_config import configure_logging
 from database.session import Base, engine
-
 
 configure_logging()
 
@@ -21,6 +21,7 @@ register_error_handlers(app)
 
 
 app.include_router(profile_router)
+app.include_router(auth_router)
 
 
 @app.get("/")

@@ -7,6 +7,8 @@ from schemas.profile_schema import (
     ProfileResponse,
     ProfileUpdate,
 )
+from core.auth import get_current_user
+from models.user_model import User
 
 router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
@@ -15,6 +17,7 @@ router = APIRouter(prefix="/profiles", tags=["Profiles"])
 def create_profile(
     request: ProfileCreate,
     service: ProfileService = Depends(get_profile_service),
+    current_user: User = Depends(get_current_user),
 ):
     return service.create_profile(
         full_name=request.full_name,
@@ -29,6 +32,7 @@ def create_profile(
 @router.get("", response_model=list[ProfileResponse])
 def list_profiles(
     service: ProfileService = Depends(get_profile_service),
+    current_user: User = Depends(get_current_user),
 ):
     return service.list_profiles()
 
@@ -37,6 +41,7 @@ def list_profiles(
 def get_profile_by_id(
     profile_id: int,
     service: ProfileService = Depends(get_profile_service),
+    current_user: User = Depends(get_current_user),
 ):
     return service.get_profile(profile_id)
 
@@ -46,6 +51,7 @@ def update_profile(
     profile_id: int,
     profile_data: ProfileUpdate,
     service: ProfileService = Depends(get_profile_service),
+    current_user: User = Depends(get_current_user),
 ) -> ProfileResponse:
     update_profile = service.update_profile(
         profile_id=profile_id,
@@ -67,6 +73,7 @@ def update_profile(
 def delete_profile(
     profile_id: int,
     service: ProfileService = Depends(get_profile_service),
+    current_user: User = Depends(get_current_user),
 ) -> None:
     deleted = service.delete_profile(profile_id)
 

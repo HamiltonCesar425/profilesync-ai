@@ -5,6 +5,20 @@ from main import app
 client = TestClient(app)
 
 
+def get_auth_headers() -> dict[str, str]:
+    payload = {
+        "email": "profiles-test@example.com",
+        "password": "strong-password",
+    }
+
+    client.post("/auth/register", json=payload)
+
+    response = client.post("/auth/login", json=payload)
+    token = response.json()["access_token"]
+
+    return {"Authorization": f"Bearer {token}"}
+
+
 def test_root_endpoint() -> None:
     response = client.get("/")
 
@@ -25,6 +39,7 @@ def test_create_profile() -> None:
     response = client.post(
         "/profiles",
         json=payload,
+        headers=get_auth_headers(),
     )
 
     assert response.status_code == 200
@@ -36,7 +51,7 @@ def test_create_profile() -> None:
 
 
 def test_list_profiles() -> None:
-    response = client.get("/profiles")
+    response = client.get("/profiles", headers=get_auth_headers())
 
     assert response.status_code == 200
     assert isinstance(response.json(), list)
@@ -52,11 +67,15 @@ def test_get_profile_by_id() -> None:
     create_response = client.post(
         "/profiles",
         json=payload,
+        headers=get_auth_headers(),
     )
 
     profile_id = create_response.json()["id"]
 
-    response = client.get(f"/profiles/{profile_id}")
+    response = client.get(
+        f"/profiles/{profile_id}",
+        headers=get_auth_headers(),
+    )
 
     assert response.status_code == 200
 
@@ -67,7 +86,7 @@ def test_get_profile_by_id() -> None:
 
 
 def test_get_profile_by_id_not_found() -> None:
-    response = client.get("/profiles/999999")
+    response = client.get("/profiles/999999", headers=get_auth_headers())
 
     assert response.status_code == 404
     assert response.json() == {
@@ -83,7 +102,11 @@ def test_update_profile() -> None:
         "summary": "Sample profile update summary",
     }
 
-    create_response = client.post("/profiles", json=create_payload)
+    create_response = client.post(
+        "/profiles",
+        json=create_payload,
+        headers=get_auth_headers(),
+    )
     profile_id = create_response.json()["id"]
 
     update_payload = {
@@ -95,7 +118,11 @@ def test_update_profile() -> None:
         "github_url": "https://github.com/updated-profile",
     }
 
-    response = client.put(f"/profiles/{profile_id}", json=update_payload)
+    response = client.put(
+        f"/profiles/{profile_id}",
+        json=update_payload,
+        headers=get_auth_headers(),
+    )
 
     assert response.status_code == 200
 
@@ -117,7 +144,11 @@ def test_update_profile_not_found() -> None:
         "summary": "Sample update payload for missing profile",
     }
 
-    response = client.put("/profiles/999999", json=payload)
+    response = client.put(
+        "/profiles/999999",
+        json=payload,
+        headers=get_auth_headers(),
+    )
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Profile not found"}
@@ -130,21 +161,31 @@ def test_delete_profile() -> None:
         "summary": "Sample profile delete summary",
     }
 
-    create_response = client.post("/profiles", json=payload)
+    create_response = client.post(
+        "/profiles",
+        json=payload,
+        headers=get_auth_headers(),
+    )
     profile_id = create_response.json()["id"]
 
-    response = client.delete(f"/profiles/{profile_id}")
+    response = client.delete(
+        f"/profiles/{profile_id}",
+        headers=get_auth_headers(),
+    )
 
     assert response.status_code == 204
     assert response.content == b""
 
-    get_response = client.get(f"/profiles/{profile_id}")
+    get_response = client.get(
+        f"/profiles/{profile_id}",
+        headers=get_auth_headers(),
+    )
 
     assert get_response.status_code == 404
 
 
 def test_delete_profile_not_found() -> None:
-    response = client.delete("/profiles/999999")
+    response = client.delete("/profiles/999999", headers=get_auth_headers())
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Profile not found"}
