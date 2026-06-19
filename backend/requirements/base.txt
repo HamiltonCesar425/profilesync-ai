@@ -4,3 +4,6 @@ sqlalchemy
 psycopg2-binary
 pydantic-settings
 python-dotenv
+email-validator
+bcrypt==4.0.1
+python-jose[cryptography]
