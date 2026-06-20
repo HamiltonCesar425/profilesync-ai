@@ -47,9 +47,7 @@ def login_user(
             detail="Invalid credentials",
         )
 
-    access_token = auth_service.create_user_access_token(user)
-
     return Token(
-        access_token=access_token,
+        access_token=auth_service.create_user_access_token(user),
         token_type="bearer",
     )

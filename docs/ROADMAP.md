@@ -59,7 +59,7 @@ Transformar experiências técnicas em materiais profissionais.
 ## Funcionalidades
 
 - Gerador de resumo profissional
-- Gerador de currículo
+- Gerador de currículo ATS-Friendly
 - Gerador de bio LinkedIn
 - Templates reutilizáveis
 

@@ -8,3 +8,7 @@ class ProfileNotFoundError(DomainError):
 
 class InvalidProfileDataError(DomainError):
     """Raised when profile data is invalid."""
+
+
+class UserNotFoundError(Exception):
+    pass

@@ -23,7 +23,12 @@ def get_profile_service(
     db: Session = Depends(get_db),
 ) -> ProfileService:
     profile_repository = ProfileRepository(db)
-    return ProfileService(profile_repository)
+    user_repository = UserRepository(db)
+
+    return ProfileService(
+        repository=profile_repository,
+        user_repository=user_repository,
+    )
 
 
 def get_auth_service(

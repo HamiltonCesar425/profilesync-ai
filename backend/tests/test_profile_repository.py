@@ -4,6 +4,9 @@ from database import Base, engine, SessionLocal
 from repositories.profile_repository import ProfileRepository
 
 
+TEST_USER_ID = 1
+
+
 def setup_function() -> None:
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
@@ -23,6 +26,7 @@ def test_create_profile() -> None:
     repository = ProfileRepository(db)
 
     profile = repository.create(
+        user_id=TEST_USER_ID,
         full_name="Test User",
         professional_title="Software Developer",
         summary="Sample professional profile.",
@@ -47,18 +51,20 @@ def test_list_all_profiles() -> None:
     repository = ProfileRepository(db)
 
     repository.create(
+        user_id=TEST_USER_ID,
         full_name="Test User",
         professional_title="Software Developer",
         summary="Sample professional profile.",
     )
 
     repository.create(
+        user_id=TEST_USER_ID,
         full_name="Sample User",
         professional_title="Data Analyst",
         summary="Another sample professional profile.",
     )
 
-    profiles = repository.list_all()
+    profiles = repository.list_by_user_id(TEST_USER_ID)
 
     assert len(profiles) == 2
     assert profiles[0].full_name == "Test User"
@@ -72,12 +78,13 @@ def test_get_by_id_existing_profile() -> None:
     repository = ProfileRepository(db)
 
     created_profile = repository.create(
+        user_id=TEST_USER_ID,
         full_name="Test User",
         professional_title="Software Developer",
         summary="Existing sample professional profile.",
     )
 
-    found_profile = repository.get_by_id(created_profile.id)
+    found_profile = repository.get_by_id_and_user_id(created_profile.id, TEST_USER_ID)
 
     assert found_profile is not None
     assert found_profile.id == created_profile.id
@@ -90,7 +97,7 @@ def test_get_by_id_non_existing_profile() -> None:
     db = SessionLocal()
     repository = ProfileRepository(db)
 
-    profile = repository.get_by_id(999)
+    profile = repository.get_by_id_and_user_id(999, TEST_USER_ID)
 
     assert profile is None
 
@@ -99,6 +106,7 @@ def test_get_by_id_non_existing_profile() -> None:
 
 def test_update_existing_profile(profile_repository):
     profile = profile_repository.create(
+        user_id=TEST_USER_ID,
         full_name="Test User",
         professional_title="Software Developer",
         summary="Initial sample professional profile.",
@@ -109,6 +117,7 @@ def test_update_existing_profile(profile_repository):
 
     updated_profile = profile_repository.update(
         profile_id=profile.id,
+        user_id=TEST_USER_ID,
         full_name="Updated Test User",
         professional_title="Senior Software Developer",
         summary="Updated sample professional profile.",
@@ -130,6 +139,7 @@ def test_update_existing_profile(profile_repository):
 def test_update_non_existing_profile(profile_repository):
     updated_profile = profile_repository.update(
         profile_id=999,
+        user_id=TEST_USER_ID,
         full_name="Unknown Test User",
         professional_title="Unknown Role",
         summary="Unknown sample professional profile.",
@@ -140,19 +150,20 @@ def test_update_non_existing_profile(profile_repository):
 
 def test_delete_existing_profile(profile_repository):
     profile = profile_repository.create(
+        user_id=TEST_USER_ID,
         full_name="Test User",
         professional_title="Software Developer",
         summary="Sample profile marked for deletion.",
     )
 
-    result = profile_repository.delete(profile.id)
-    deleted_profile = profile_repository.get_by_id(profile.id)
+    result = profile_repository.delete(profile.id, TEST_USER_ID)
+    deleted_profile = profile_repository.get_by_id_and_user_id(profile.id, TEST_USER_ID)
 
     assert result is True
     assert deleted_profile is None
 
 
 def test_delete_non_existing_profile(profile_repository):
-    result = profile_repository.delete(profile_id=999)
+    result = profile_repository.delete(profile_id=999, user_id=TEST_USER_ID)
 
     assert result is False

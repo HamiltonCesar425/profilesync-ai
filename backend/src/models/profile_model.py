@@ -1,15 +1,33 @@
-from sqlalchemy import Column, Integer, String, Text
+from typing import TYPE_CHECKING
+
+from sqlalchemy import ForeignKey, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.session import Base
 
+if TYPE_CHECKING:
+    from models.user_model import User
+
 
 class ProfileModel(Base):
-    __tablename__ = "profile"
+    __tablename__ = "profiles"
 
-    id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String(120), nullable=False)
-    professional_title = Column(String(120), nullable=False)
-    summary = Column(Text, nullable=False)
-    location = Column(String(120), nullable=True)
-    linkedin_url = Column(String(255), nullable=True)
-    github_url = Column(String(255), nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+
+    full_name: Mapped[str] = mapped_column(String(120))
+    professional_title: Mapped[str] = mapped_column(String(120))
+    summary: Mapped[str] = mapped_column(Text)
+
+    location: Mapped[str | None] = mapped_column(String(120))
+    linkedin_url: Mapped[str | None] = mapped_column(String(255))
+    github_url: Mapped[str | None] = mapped_column(String(255))
+
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+        nullable=False,
+    )
+
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="profiles",
+    )

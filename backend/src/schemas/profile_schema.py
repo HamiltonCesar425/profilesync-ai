@@ -21,3 +21,4 @@ class ProfileUpdate(BaseModel):
 
 class ProfileResponse(ProfileCreate):
     id: int
+    user_id: int

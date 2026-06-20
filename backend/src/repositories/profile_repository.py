@@ -10,6 +10,7 @@ class ProfileRepository:
 
     def create(
         self,
+        user_id: int,
         full_name: str,
         professional_title: str,
         summary: str,
@@ -18,6 +19,7 @@ class ProfileRepository:
         github_url: str | None = None,
     ) -> Profile:
         profile_model = ProfileModel(
+            user_id=user_id,
             full_name=full_name,
             professional_title=professional_title,
             summary=summary,
@@ -32,14 +34,25 @@ class ProfileRepository:
 
         return self._to_domain(profile_model)
 
-    def list_all(self) -> list[Profile]:
-        profiles = self.db.query(ProfileModel).all()
+    def list_by_user_id(self, user_id: int) -> list[Profile]:
+        profiles = (
+            self.db.query(ProfileModel).filter(ProfileModel.user_id == user_id).all()
+        )
 
         return [self._to_domain(profile) for profile in profiles]
 
-    def get_by_id(self, profile_id: int) -> Profile | None:
+    def get_by_id_and_user_id(
+        self,
+        profile_id: int,
+        user_id: int,
+    ) -> Profile | None:
         profile = (
-            self.db.query(ProfileModel).filter(ProfileModel.id == profile_id).first()
+            self.db.query(ProfileModel)
+            .filter(
+                ProfileModel.id == profile_id,
+                ProfileModel.user_id == user_id,
+            )
+            .first()
         )
 
         if profile is None:
@@ -50,6 +63,7 @@ class ProfileRepository:
     def update(
         self,
         profile_id: int,
+        user_id: int,
         full_name: str,
         professional_title: str,
         summary: str,
@@ -58,7 +72,12 @@ class ProfileRepository:
         github_url: str | None = None,
     ) -> Profile | None:
         profile_model = (
-            self.db.query(ProfileModel).filter(ProfileModel.id == profile_id).first()
+            self.db.query(ProfileModel)
+            .filter(
+                ProfileModel.id == profile_id,
+                ProfileModel.user_id == user_id,
+            )
+            .first()
         )
 
         if profile_model is None:
@@ -76,9 +95,18 @@ class ProfileRepository:
 
         return self._to_domain(profile_model)
 
-    def delete(self, profile_id: int) -> bool:
+    def delete(
+        self,
+        profile_id: int,
+        user_id: int,
+    ) -> bool:
         profile_model = (
-            self.db.query(ProfileModel).filter(ProfileModel.id == profile_id).first()
+            self.db.query(ProfileModel)
+            .filter(
+                ProfileModel.id == profile_id,
+                ProfileModel.user_id == user_id,
+            )
+            .first()
         )
 
         if profile_model is None:
@@ -93,6 +121,7 @@ class ProfileRepository:
     def _to_domain(profile_model: ProfileModel) -> Profile:
         return Profile(
             id=profile_model.id,
+            user_id=profile_model.user_id,
             full_name=profile_model.full_name,
             professional_title=profile_model.professional_title,
             summary=profile_model.summary,
