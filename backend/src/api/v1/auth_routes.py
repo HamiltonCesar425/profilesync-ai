@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-
 from app.dependencies import get_auth_service
-from schemas.user_schema import Token, UserCreate, UserResponse
+from schemas.user_schema import UserCreate, UserResponse, LoginRequest, TokenResponse
 from services.auth_service import AuthService
 
 router = APIRouter(
     prefix="/auth",
-    tags=["auth"],
+    tags=["Authentication"],
 )
 
 
@@ -30,24 +29,20 @@ def register_user(
 
 @router.post(
     "/login",
-    response_model=Token,
+    response_model=TokenResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Login com email e senha",
+    description=(
+        "Autentica o usuário usando JSON no corpo da requissição. "
+        "Após o login, copie o campo access_token retornado e use-o no "
+        "botão Authorize do Swagger para acessar endpoints protegidos."
+    ),
 )
-def login_user(
-    user_data: UserCreate,
+def login(
+    payload: LoginRequest,
     auth_service: AuthService = Depends(get_auth_service),
-) -> Token:
-    user = auth_service.authenticate_user(
-        email=user_data.email,
-        password=user_data.password,
-    )
-
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
-        )
-
-    return Token(
-        access_token=auth_service.create_user_access_token(user),
-        token_type="bearer",
+) -> TokenResponse:
+    return auth_service.login(
+        email=payload.email,
+        password=payload.password,
     )

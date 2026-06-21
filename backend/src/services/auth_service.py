@@ -1,6 +1,8 @@
+from fastapi import HTTPException, status
+
 from models.user_model import User
 from repositories.user_repository import UserRepository
-from schemas.user_schema import UserCreate
+from schemas.user_schema import TokenResponse, UserCreate
 from core.security import (
     create_access_token,
     get_password_hash,
@@ -46,4 +48,18 @@ class AuthService:
     def create_user_access_token(self, user: User) -> str:
         return create_access_token(
             data={"sub": user.email},
+        )
+
+    def login(self, email: str, password: str) -> TokenResponse:
+        user = self.authenticate_user(email=email, password=password)
+
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid credentials",
+            )
+
+        return TokenResponse(
+            access_token=self.create_user_access_token(user),
+            token_type="bearer",
         )

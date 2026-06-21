@@ -8,6 +8,11 @@ class UserCreate(BaseModel):
     password: str = Field(min_length=8)
 
 
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
 class UserResponse(BaseModel):
     id: int
     email: EmailStr
@@ -21,3 +26,7 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+class TokenResponse(Token):
+    pass
