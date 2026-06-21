@@ -15,7 +15,10 @@ def get_auth_headers() -> dict[str, str]:
 
     client.post("/auth/register", json=payload)
 
-    response = client.post("/auth/login", json=payload)
+    response = client.post(
+        "/auth/login",
+        data={"username": payload["email"], "password": payload["password"]},
+    )
     token = response.json()["access_token"]
 
     return {"Authorization": f"Bearer {token}"}

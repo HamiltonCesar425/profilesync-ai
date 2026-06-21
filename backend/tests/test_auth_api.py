@@ -45,7 +45,7 @@ def test_login_user() -> None:
 
     response = client.post(
         "/auth/login",
-        json=payload,
+        data={"username": payload["email"], "password": payload["password"]},
     )
 
     assert response.status_code == 200
@@ -66,8 +66,8 @@ def test_login_with_invalid_password() -> None:
 
     response = client.post(
         "/auth/login",
-        json={
-            "email": "invalid@example.com",
+        data={
+            "username": "invalid@example.com",
             "password": "wrong-password",
         },
     )
@@ -78,8 +78,8 @@ def test_login_with_invalid_password() -> None:
 def test_login_with_invalid_email() -> None:
     response = client.post(
         "/auth/login",
-        json={
-            "email": "missing@example.com",
+        data={
+            "username": "missing@example.com",
             "password": "strong-password",
         },
     )

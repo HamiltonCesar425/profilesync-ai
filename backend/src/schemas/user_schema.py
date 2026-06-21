@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
 class UserCreate(BaseModel):
@@ -9,8 +9,24 @@ class UserCreate(BaseModel):
 
 
 class LoginRequest(BaseModel):
-    email: EmailStr
-    password: str
+    email: EmailStr = Field(
+        ..., description="E-mail cadastrado do usuário.", examples=["teste@example.com"]
+    )
+    password: str = Field(
+        ...,
+        min_length=8,
+        description="Senha do usuário.",
+        examples=["strong-password"],
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "email": "teste@example.com",
+                "password": "strong-password",
+            }
+        }
+    )
 
 
 class UserResponse(BaseModel):
@@ -28,5 +44,23 @@ class Token(BaseModel):
     token_type: str
 
 
-class TokenResponse(Token):
-    pass
+class TokenResponse(BaseModel):
+    access_token: str = Field(
+        ...,
+        description="Token JWT de acesso.",
+        examples=["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."],
+    )
+    token_type: str = Field(
+        default="bearer",
+        description="Tipo do token retornado.",
+        examples=["bearer"],
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                "token_type": "bearer",
+            }
+        }
+    )
