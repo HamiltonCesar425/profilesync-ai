@@ -7,6 +7,7 @@ from database.session import Base
 
 if TYPE_CHECKING:
     from models.user_model import User
+    from models.resume_model import Resume
 
 
 class ProfileModel(Base):
@@ -30,4 +31,10 @@ class ProfileModel(Base):
     user: Mapped["User"] = relationship(
         "User",
         back_populates="profiles",
+    )
+
+    resumes: Mapped[list["Resume"]] = relationship(
+        "Resume",
+        back_populates="profile",
+        cascade="all, delete-orphan",
     )

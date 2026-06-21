@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, Integer, String
@@ -8,6 +8,7 @@ from database.session import Base
 
 if TYPE_CHECKING:
     from models.profile_model import ProfileModel
+    from models.resume_model import Resume
 
 
 class User(Base):
@@ -33,12 +34,18 @@ class User(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime,
-        default=datetime.utcnow,
+        default=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
 
     profiles: Mapped[list["ProfileModel"]] = relationship(
         "ProfileModel",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+    resumes: Mapped[list["Resume"]] = relationship(
+        "Resume",
         back_populates="user",
         cascade="all, delete-orphan",
     )
