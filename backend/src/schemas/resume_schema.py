@@ -26,6 +26,6 @@ class ResumeResponse(ResumeBase):
     user_id: int
     profile_id: int
     created_at: datetime
-    update_at: datetime
+    updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
