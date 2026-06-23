@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from models.profile_model import ProfileModel
 from models.resume_model import Resume
 
 
@@ -44,3 +45,14 @@ class ResumeRepository:
     def delete(self, resume: Resume) -> None:
         self.db.delete(resume)
         self.db.commit()
+
+    def get_by_id_and_user_id(self, resume_id: int, user_id: int):
+        return (
+            self.db.query(Resume)
+            .join(ProfileModel, Resume.profile_id == ProfileModel.id)
+            .filter(
+                Resume.id == resume_id,
+                ProfileModel.user_id == user_id,
+            )
+            .first()
+        )

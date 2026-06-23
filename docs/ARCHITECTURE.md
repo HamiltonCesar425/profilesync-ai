@@ -1,475 +1,141 @@
-# ProfileSync AI — Architecture
+# ProfileSync AI — Arquitetura e Contratos Vigentes
 
-## 1. Visão Arquitetural
+## Visão geral
 
-O ProfileSync AI será desenvolvido como uma aplicação web full stack, com separação clara entre frontend, backend e banco de dados.
-
-A arquitetura inicial seguirá o modelo:
+O ProfileSync AI é uma API REST para gerenciar usuários, perfis profissionais e versões de currículos. A API autentica usuários com JWT e permite exportar currículos em Markdown compatível com ATS.
 
 ```text
-Frontend React
-↓
-API FastAPI
-↓
-Camada de Serviços
-↓
-Camada de Repositórios
-↓
-PostgreSQL
+Cliente HTTP / Frontend → Bearer JWT → API FastAPI → Serviços → Repositórios → SQLAlchemy → SQLite
 ```
 
-O objetivo é manter uma estrutura simples, testável e preparada para evolução futura.
+O banco local atual é SQLite em `backend/data/profilesync.db`. PostgreSQL é uma evolução planejada, não um requisito da implementação atual.
 
----
+## Componentes implementados
 
-## 2. Componentes Principais
+| Componente | Responsabilidade |
+| --- | --- |
+| `api/v1` | Rotas HTTP para autenticação, perfis, currículos e exportação. |
+| `schemas` | Contratos Pydantic de entrada e saída. |
+| `services` | Regras de negócio e autorização por usuário. |
+| `repositories` | Persistência com SQLAlchemy. |
+| `models` | Tabelas `users`, `profiles` e `resumes`. |
+| `exporters` | Renderização de currículos em Markdown. |
+| `core` | Configuração, JWT, segurança e logging. |
 
-### Frontend
+## Modelo de dados atual
 
-Responsável pela interface do usuário.
+### User
 
-Principais responsabilidades:
+| Campo | Tipo | Observação |
+| --- | --- | --- |
+| `id` | inteiro | Identificador do usuário. |
+| `email` | string | Único; usado como identidade no JWT. |
+| `hashed_password` | string | Interno; nunca retornado pela API. |
+| `created_at` | datetime | Gerado na criação. |
 
-* Exibir dashboard profissional
-* Permitir cadastro de projetos
-* Permitir cadastro de tecnologias
-* Permitir registro de entregas técnicas
-* Exibir conteúdos gerados
-* Permitir revisão manual antes de exportação
+### Profile
 
-Tecnologia inicial:
+Um perfil pertence a um usuário e pode possuir vários currículos.
 
-* React
-* JavaScript
-* React Router
+| Campo | Tipo | Regra |
+| --- | --- | --- |
+| `id`, `user_id` | inteiro | Gerados/retornados pela API. |
+| `full_name` | string | 3–120 caracteres. |
+| `professional_title` | string | 3–120 caracteres. |
+| `summary` | string | 20–1000 caracteres. |
+| `location` | string ou `null` | Máximo de 120 caracteres. |
+| `linkedin_url`, `github_url` | string ou `null` | Máximo de 255 caracteres. |
 
----
+### Resume
 
-### Backend
+Um currículo pertence simultaneamente ao usuário autenticado e a um perfil desse usuário.
 
-Responsável pela regra de negócio, APIs e integração entre frontend, banco de dados e camada de geração assistida.
+| Campo | Tipo | Regra |
+| --- | --- | --- |
+| `id`, `user_id`, `profile_id` | inteiro | IDs são retornados; `profile_id` é exigido na criação. |
+| `title` | string | 2–120 caracteres. |
+| `target_role` | string | 2–120 caracteres. |
+| `content` | string | Mínimo de 10 caracteres; corpo livre do currículo. |
+| `version` | inteiro | Mínimo 1; padrão `1`. |
+| `created_at`, `updated_at` | datetime | Gerados pelo servidor. |
 
-Principais responsabilidades:
+Os campos legados por seção (`experience`, `skills`, `education` etc.) não fazem parte do contrato da API atual. O conteúdo do currículo é armazenado em `content`.
 
-* Expor endpoints REST
-* Validar dados de entrada
-* Aplicar regras de negócio
-* Persistir informações
-* Gerar conteúdos profissionais
-* Preparar integração futura com IA
+## Autenticação
 
-Tecnologia inicial:
+As rotas de perfis, currículos e exportação exigem `Authorization: Bearer <access_token>`.
 
-* Python
-* FastAPI
-* Pydantic
-* SQLAlchemy
+| Método | Rota | Contrato |
+| --- | --- | --- |
+| `POST` | `/auth/register` | JSON: `email` válido e `password` com ao menos 8 caracteres. Retorna usuário e `201`. |
+| `POST` | `/auth/login` | `application/x-www-form-urlencoded`: use o e-mail em `username` e a senha em `password`. Retorna `{ "access_token", "token_type": "bearer" }`. |
 
----
+O Swagger usa OAuth2 Password Flow para `/auth/login`.
 
-### Banco de Dados
+## Contratos HTTP
 
-Responsável pela persistência das informações profissionais do usuário.
+### Perfis
 
-Tecnologia inicial:
+| Método | Rota | Resultado |
+| --- | --- | --- |
+| `POST` | `/profiles` | Cria um perfil do usuário autenticado. |
+| `GET` | `/profiles` | Lista os perfis do usuário autenticado. |
+| `GET` | `/profiles/{profile_id}` | Retorna um perfil pertencente ao usuário. |
+| `PUT` | `/profiles/{profile_id}` | Atualização completa do perfil. |
+| `DELETE` | `/profiles/{profile_id}` | Remove o perfil e seus currículos; responde `204`. |
 
-* PostgreSQL
-
-Entidades iniciais previstas:
-
-* ProfessionalProfile
-* Project
-* Technology
-* Experience
-* Skill
-* GeneratedContent
-
----
-
-## 3. Separação de Camadas do Backend
-
-A estrutura inicial do backend deverá seguir separação por responsabilidade:
-
-```text
-backend/
-└── src/
-    ├── main.py
-    ├── core/
-    ├── api/
-    ├── schemas/
-    ├── models/
-    ├── services/
-    ├── repositories/
-    └── database/
+```json
+{
+  "full_name": "Ana Souza",
+  "professional_title": "Desenvolvedora Backend",
+  "summary": "Desenvolvedora Python com experiência em APIs, bancos de dados e testes automatizados.",
+  "location": "São Paulo, SP",
+  "linkedin_url": "https://linkedin.com/in/ana-souza",
+  "github_url": "https://github.com/ana-souza"
+}
 ```
 
-### core/
+### Currículos
 
-Configurações centrais da aplicação.
+| Método | Rota | Resultado |
+| --- | --- | --- |
+| `POST` | `/resumes` | Cria um currículo para um perfil do usuário; responde `201`. |
+| `GET` | `/resumes/profile/{profile_id}` | Lista os currículos do perfil. |
+| `GET` | `/resumes/{resume_id}/profile/{profile_id}` | Retorna um currículo. |
+| `PUT` | `/resumes/{resume_id}/profile/{profile_id}` | Atualização parcial: todos os campos são opcionais. |
+| `DELETE` | `/resumes/{resume_id}/profile/{profile_id}` | Remove o currículo; responde `204`. |
 
-Responsabilidades:
-
-* Variáveis de ambiente
-* Configuração da aplicação
-* Logging
-* Constantes globais
-
----
-
-### api/
-
-Camada de rotas HTTP.
-
-Responsabilidades:
-
-* Definir endpoints
-* Receber requisições
-* Retornar respostas
-* Encaminhar chamadas para services
-
----
-
-### schemas/
-
-Contratos de entrada e saída da API.
-
-Responsabilidades:
-
-* Validar payloads
-* Definir DTOs
-* Padronizar respostas
-
----
-
-### models/
-
-Modelos de banco de dados.
-
-Responsabilidades:
-
-* Representar tabelas
-* Definir colunas
-* Definir relacionamentos
-
----
-
-### services/
-
-Camada de regra de negócio.
-
-Responsabilidades:
-
-* Orquestrar casos de uso
-* Aplicar validações de domínio
-* Preparar dados para geração de conteúdo
-* Coordenar chamadas entre repositories e geradores
-
----
-
-### repositories/
-
-Camada de acesso a dados.
-
-Responsabilidades:
-
-* Consultar banco
-* Criar registros
-* Atualizar registros
-* Remover registros
-* Isolar SQLAlchemy da regra de negócio
-
----
-
-### database/
-
-Configuração de persistência.
-
-Responsabilidades:
-
-* Criar engine
-* Gerenciar sessões
-* Configurar conexão com PostgreSQL
-
----
-
-## 4. Fluxo Principal da Aplicação
-
-Fluxo esperado da versão inicial:
-
-```text
-Usuário cadastra perfil profissional
-↓
-Usuário cadastra projetos
-↓
-Usuário associa tecnologias aos projetos
-↓
-Usuário registra entregas técnicas
-↓
-Backend organiza os dados
-↓
-Camada de geração cria conteúdo profissional
-↓
-Usuário revisa o conteúdo
-↓
-Sistema exporta em Markdown
+```json
+{
+  "profile_id": 1,
+  "title": "Currículo — Ana Souza",
+  "target_role": "Desenvolvedora Backend Python",
+  "content": "Desenvolvedora com experiência em FastAPI, SQLAlchemy e testes automatizados.",
+  "version": 1
+}
 ```
 
----
+### Exportação
 
-## 5. Entidades Iniciais
+| Método | Rota | Resultado |
+| --- | --- | --- |
+| `GET` | `/exports/resumes/{resume_id}/markdown` | Retorna o currículo do usuário em `text/markdown`. |
 
-### ProfessionalProfile
+O Markdown inclui título, cargo-alvo, conteúdo e versão. A exportação valida a posse do currículo pelo usuário autenticado; não requer `profile_id` na URL.
 
-Representa o perfil profissional base do usuário.
+## Respostas de erro
 
-Campos previstos:
+- Falha de validação do FastAPI/Pydantic: `422`.
+- Credenciais ausentes, inválidas ou expiradas: `401` com `WWW-Authenticate: Bearer`.
+- Recurso inexistente ou não pertencente ao usuário: `404`.
+- E-mail já cadastrado: `400`.
 
-* id
-* name
-* title
-* location
-* summary
-* github_url
-* linkedin_url
-* created_at
-* updated_at
+## Segurança e qualidade
 
----
+- Senhas são persistidas somente em formato hash.
+- A autorização é aplicada antes de acessar perfis, currículos e exportações.
+- O projeto possui testes automatizados com `pytest` e requisito mínimo de 80% de cobertura.
 
-### Project
+## Evoluções planejadas
 
-Representa um projeto profissional ou de portfólio.
-
-Campos previstos:
-
-* id
-* name
-* description
-* objective
-* status
-* repository_url
-* deploy_url
-* created_at
-* updated_at
-
----
-
-### Technology
-
-Representa uma tecnologia usada nos projetos.
-
-Campos previstos:
-
-* id
-* name
-* category
-* created_at
-
-Categorias possíveis:
-
-* Backend
-* Frontend
-* Database
-* Cloud
-* Observability
-* Security
-* Integration
-* Product
-* Data/AI
-
----
-
-### Experience
-
-Representa uma entrega, aprendizado ou marco técnico.
-
-Campos previstos:
-
-* id
-* project_id
-* title
-* description
-* impact
-* date
-* created_at
-
----
-
-### Skill
-
-Representa uma competência profissional consolidada.
-
-Campos previstos:
-
-* id
-* name
-* category
-* level
-* evidence
-* created_at
-
----
-
-### GeneratedContent
-
-Representa um conteúdo profissional gerado pela aplicação.
-
-Campos previstos:
-
-* id
-* content_type
-* title
-* content
-* source_context
-* created_at
-* updated_at
-
-Tipos possíveis:
-
-* CV
-* LinkedIn Bio
-* GitHub Project Description
-* Job Platform Summary
-* Technical Summary
-
----
-
-## 6. Princípios Arquiteturais
-
-A arquitetura deverá seguir os seguintes princípios:
-
-* Separação clara de responsabilidades
-* Baixo acoplamento entre camadas
-* Código simples antes de código sofisticado
-* Contratos explícitos com Pydantic
-* Regras de negócio fora das rotas
-* Acesso ao banco isolado em repositories
-* Evolução incremental
-* Testabilidade desde o início
-* Segurança e conformidade como preocupação transversal
-
----
-
-## 7. Segurança e Conformidade
-
-Desde a primeira versão, o sistema deverá evitar:
-
-* armazenamento desnecessário de dados sensíveis
-* automação agressiva em plataformas externas
-* publicação automática sem aprovação manual
-* coleta invasiva de dados
-
-Diretrizes iniciais:
-
-* uso de variáveis de ambiente
-* proteção de chaves e tokens
-* `.env` fora do versionamento
-* revisão manual antes de qualquer publicação externa
-* transparência no uso de IA
-
----
-
-## 8. Observabilidade Futura
-
-A aplicação deverá ser preparada para evolução futura com:
-
-* logging estruturado
-* métricas Prometheus
-* dashboards Grafana
-* rastreamento OpenTelemetry
-* monitoramento de latência
-* monitoramento de erros
-
-Esses recursos não fazem parte obrigatória da primeira versão, mas devem ser considerados na organização do backend.
-
----
-
-## 9. Integrações Futuras
-
-Integrações planejadas para fases posteriores:
-
-* GitHub API
-* Exportação PDF
-* APIs de IA generativa
-* Plataformas de vagas, com aprovação manual
-* Serviços de autenticação
-* Redis para cache
-* OpenTelemetry para rastreamento
-
-A primeira versão não deverá automatizar login ou publicação direta em plataformas externas.
-
----
-
-## 10. Decisões Técnicas Iniciais
-
-### Decisão 1 — FastAPI no backend
-
-Motivo:
-
-* alta produtividade
-* tipagem com Pydantic
-* boa documentação automática
-* aderência ao histórico técnico do projeto
-
----
-
-### Decisão 2 — React no frontend
-
-Motivo:
-
-* aderência ao portfólio atual
-* boa aceitação no mercado
-* facilidade para criação de interfaces modernas
-
----
-
-### Decisão 3 — PostgreSQL como banco principal
-
-Motivo:
-
-* banco relacional robusto
-* forte presença em ambientes profissionais
-* boa compatibilidade com SQLAlchemy
-* adequado para modelagem estruturada
-
----
-
-### Decisão 4 — Publicação manual
-
-Motivo:
-
-* reduzir riscos de segurança
-* respeitar termos de uso de plataformas externas
-* manter controle humano sobre identidade profissional
-
----
-
-## 11. Evolução Arquitetural Esperada
-
-A arquitetura deverá evoluir gradualmente:
-
-```text
-MVP local
-↓
-API + banco
-↓
-Frontend integrado
-↓
-Exportação de conteúdo
-↓
-Deploy
-↓
-Testes automatizados
-↓
-Observabilidade
-↓
-Integrações externas controladas
-↓
-IA contextual
-```
-
----
-
-## 12. Status Atual
-
-O projeto está em fase inicial de documentação, planejamento arquitetural e preparação do ambiente de desenvolvimento.
+Ainda não fazem parte do contrato vigente: CRUD de projetos, tecnologias, experiências e skills; geração por IA; exportação PDF; PostgreSQL; integrações com GitHub ou plataformas de vagas; cache, métricas e rastreamento distribuído.

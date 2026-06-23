@@ -1,113 +1,41 @@
 # ProfileSync AI — Roadmap
 
-## Fase 1 — Fundação do Projeto
+## Concluído — Fundação da API
 
-Objetivo:
-Estabelecer a base arquitetural e estrutural da aplicação.
+- Estrutura FastAPI com camadas de rotas, schemas, serviços, repositórios e modelos.
+- Persistência SQLite com SQLAlchemy.
+- Logging básico e tratamento de erros de domínio.
+- Testes automatizados com requisito de cobertura.
 
-## Backend
+## Concluído — Identidade e currículos
 
-- Estruturar projeto FastAPI
-- Configurar arquitetura inicial
-- Configurar variáveis de ambiente
-- Criar endpoint healthcheck
-- Configurar logging básico
+- Registro e autenticação JWT.
+- CRUD autenticado de perfis profissionais.
+- CRUD autenticado de currículos por perfil.
+- Controle de posse de perfis e currículos por usuário.
+- Exportação de currículo em Markdown ATS-friendly.
 
-## Frontend
+## Próxima etapa — Experiência profissional estruturada
 
-- Criar projeto React
-- Estruturar pastas
-- Configurar roteamento
-- Criar layout inicial
+- Modelar projetos, tecnologias, experiências/entregas e skills.
+- Relacionar esses dados ao perfil do usuário.
+- Criar contratos, CRUDs e testes para as novas entidades.
+- Definir como esse contexto alimentará o campo `content` dos currículos.
 
-## Infraestrutura
+## Próxima etapa — Geração e revisão de conteúdo
 
-- Configurar Git
-- Criar README inicial
-- Configurar .gitignore
-- Preparar Dockerfile inicial
+- Templates reutilizáveis de currículo e resumo profissional.
+- Geração assistida por IA com transparência sobre origem e uso dos dados.
+- Fluxo de revisão manual e histórico de versões.
 
----
+## Evoluções posteriores
 
-## Fase 2 — Gestão de Projetos Profissionais
+- Exportação PDF.
+- Migração para PostgreSQL e migrations.
+- Frontend React integrado à API.
+- Docker, deploy e variáveis de ambiente por ambiente.
+- Observabilidade: métricas, tracing e dashboards.
+- Cache e integrações externas controladas.
+- Matching de vagas e recomendações de posicionamento.
 
-Objetivo:
-Permitir cadastro estruturado da evolução profissional.
-
-## Funcionalidades
-
-- CRUD de projetos
-- CRUD de tecnologias
-- CRUD de experiências
-- Relacionamento entre entidades
-
-## Banco de Dados
-
-- Modelagem relacional inicial
-- PostgreSQL
-- Migrations
-
----
-
-## Fase 3 — Geração Assistida de Conteúdo
-
-Objetivo:
-Transformar experiências técnicas em materiais profissionais.
-
----
-
-## Funcionalidades
-
-- Gerador de resumo profissional
-- Gerador de currículo ATS-Friendly
-- Gerador de bio LinkedIn
-- Templates reutilizáveis
-
----
-
-## Fase 4 — Observabilidade e Qualidade
-
-Objetivo:
-Evoluir maturidade de engenharia.
-
-## Qualidade
-
-- Testes automatizados
-- Cobertura de testes
-- Playwright E2E
-
-## Observabilidade
-
-- Prometheus
-- Grafana
-- Métricas customizadas
-- Logging estruturado
-
----
-
-## Fase 5 — Cloud e Escalabilidade
-
-Objetivo:
-Preparar arquitetura moderna.
-
-## Infraestrutura
-
-- Docker Compose
-- Redis
-- OpenTelemetry
-- Kubernetes (futuro)
-
----
-
-## Fase 6 — Inteligência Contextual
-
-Objetivo:
-Adicionar recursos inteligentes à plataforma.
-
-## Recursos futuros
-
-- Sugestão automática de skills
-- Matching entre vagas e perfil
-- Evolução temporal do currículo
-- Recomendações de posicionamento técnico
-- Insights de mercado
+Nenhuma integração futura deverá publicar conteúdo em serviços externos sem aprovação explícita do usuário.
