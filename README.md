@@ -21,7 +21,16 @@ A plataforma busca auxiliar desenvolvedores na construção e manutenção de:
 
 ---
 
-## Funcionalidades Planejadas
+## Funcionalidades
+
+### Implementadas
+
+- Registro e autenticação de usuários
+- CRUD autenticado de perfis profissionais
+- CRUD autenticado de currículos por perfil
+- Exportação de currículos em Markdown, PDF e DOCX
+
+### Planejadas
 
 - Cadastro de projetos
 - Cadastro de tecnologias
@@ -29,7 +38,6 @@ A plataforma busca auxiliar desenvolvedores na construção e manutenção de:
 - Geração assistida de currículo
 - Geração de resumo profissional
 - Geração de descrição para GitHub
-- Exportação em Markdown/PDF
 - Histórico de evolução profissional
 
 ---
@@ -40,7 +48,9 @@ A plataforma busca auxiliar desenvolvedores na construção e manutenção de:
 
 - Python
 - FastAPI
-- PostgreSQL
+- SQLAlchemy
+- SQLite no ambiente local atual
+- PostgreSQL planejado
 
 ## Frontend
 
@@ -82,15 +92,19 @@ O projeto também funciona como plataforma prática de evolução profissional e
 
 - Estrutura inicial
 - API base
-- CRUD de projetos
+- Autenticação JWT
+- CRUD de perfis
+- CRUD de currículos
+- Exportação em Markdown, PDF e DOCX
 
 ## Fase 2
 
-- Geração assistida de conteúdo profissional
+- Projetos, tecnologias, experiências e skills estruturadas
 
 ## Fase 3
 
-- Exportação e histórico
+- Geração assistida de conteúdo profissional
+- Histórico de evolução
 
 ## Fase 4
 
@@ -100,7 +114,7 @@ O projeto também funciona como plataforma prática de evolução profissional e
 
 ## Status do Projeto
 
-Em fase inicial de arquitetura e planejamento.
+Backend em evolução, com API base, autenticação, perfis, currículos e exportações implementados e cobertos por testes automatizados.
 
 ---
 

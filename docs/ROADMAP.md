@@ -14,6 +14,8 @@
 - CRUD autenticado de currículos por perfil.
 - Controle de posse de perfis e currículos por usuário.
 - Exportação de currículo em Markdown ATS-friendly.
+- Exportação de currículo em PDF.
+- Exportação de currículo em DOCX.
 
 ## Próxima etapa — Experiência profissional estruturada
 
@@ -30,7 +32,8 @@
 
 ## Evoluções posteriores
 
-- Exportação PDF.
+- Score ATS e otimização por palavras-chave.
+- Histórico de exportações e otimizações.
 - Migração para PostgreSQL e migrations.
 - Frontend React integrado à API.
 - Docker, deploy e variáveis de ambiente por ambiente.
