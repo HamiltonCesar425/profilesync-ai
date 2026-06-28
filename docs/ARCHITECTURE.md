@@ -41,13 +41,21 @@ PostgreSQL permanece como evolução planejada e não faz parte da implementaç�
 
 | Componente     | Responsabilidade                                                                                                         |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `api/v1`       | Rotas HTTP para autenticação, perfis, currículos e exportação.                                                           |
-| `schemas`      | Contratos Pydantic de entrada e saída.                                                                                   |
-| `services`     | Regras de negócio e autorização por usuário.                                                                             |
+| `api/v1`       | Rotas HTTP para autenticação, perfis, currículos, exportação e validação ATS.                                            |
+| `schemas`      | Contratos Pydantic de entrada e saída para autenticação, perfis, currículos, exportação e ATS.                           |
+| `services`     | Regras de negócio, autorização por usuário, exportação e validação ATS baseada em regras.                                |
 | `repositories` | Persistência com SQLAlchemy.                                                                                             |
-| `models`       | Tabelas `users`, `profiles` e `resumes`.                                                                                 |
+| `models`       | Modelos ORM que representam os ativos persistidos da plataforma e seus relacionamentos.                                  |
 | `exporters`    | Responsável pela transformação dos ativos de conhecimento em formatos externos (Markdown, PDF, DOCX e futuros formatos). |
 | `core`         | Configuração, JWT, segurança e logging.                                                                                  |
+
+## Motor de validação ATS
+
+O mecanismo de validação ATS foi projetado utilizando uma arquitetura baseada em regras independentes.
+
+Cada regra implementa um contrato comum (`ATSRule`), permitindo adicionar novas validações sem alterar o serviço principal.
+
+Essa abordagem reduz o acoplamento entre as regras de validação e o cálculo do score ATS, favorecendo extensibilidade e testabilidade.
 
 ## Modelo de dados atual
 
@@ -197,7 +205,7 @@ Toda utilização deverá respeitar:
 - transparência
 - possibilidade de exportação
 - possibilidade de exclusão
-  
+
 ### Exemplos de Knowledge Assets
 
 - Perfil profissional estruturado
@@ -224,11 +232,11 @@ Toda utilização deverá respeitar:
 
 ### Regra Arquitetural
 
-  Critério para Novas Funcionalidades:
+Critério para Novas Funcionalidades:
 
 Sempre que uma nova funcionalidade for proposta, deve ser respondida a seguinte pergunta:
 
-  "Esta funcionalidade cria ou fortalece algum ativo permanente de conhecimento?"
+"Esta funcionalidade cria ou fortalece algum ativo permanente de conhecimento?"
 
 Se a resposta for não, a funcionalidade deverá ser reavaliada, pois ela provavelmente agrega apenas processamento temporário, e não valor acumulativo ao produto.
 
@@ -296,11 +304,11 @@ Todas essas representações derivam do mesmo conjunto de ativos de conhecimento
 
 Camada responsável pela geração de representações especializadas dos currículos, incluindo versões otimizadas para sistemas ATS (Applicant Tracking System).
 
-| Método | Rota | Resultado |
-| --- | --- | --- |
-| `GET` | `/exports/resumes/{resume_id}/markdown` | Retorna o currículo do usuário em `text/markdown`. |
-| `GET` | `/exports/resumes/{resume_id}/pdf` | Retorna o currículo do usuário em `application/pdf`. |
-| `GET` | `/exports/resumes/{resume_id}/docx` | Retorna o currículo do usuário em formato DOCX. |
+| Método | Rota                                    | Resultado                                            |
+| ------ | --------------------------------------- | ---------------------------------------------------- |
+| `GET`  | `/exports/resumes/{resume_id}/markdown` | Retorna o currículo do usuário em `text/markdown`.   |
+| `GET`  | `/exports/resumes/{resume_id}/pdf`      | Retorna o currículo do usuário em `application/pdf`. |
+| `GET`  | `/exports/resumes/{resume_id}/docx`     | Retorna o currículo do usuário em formato DOCX.      |
 
 A arquitetura de exportação utiliza uma camada independente (Export Engine), responsável por transformar os ativos de conhecimento em diferentes formatos de saída, preservando independência entre o domínio da aplicação e os mecanismos de renderização.
 
