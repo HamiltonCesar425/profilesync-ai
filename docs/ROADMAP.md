@@ -49,6 +49,14 @@
 - Testes de serviço para cálculo e resposta de validação.
 - Testes de rota para validação ATS autenticada.
 
+## Concluído — Modelo profissional estruturado (Fase 1)
+
+- Modelagem da entidade Technology.
+- CRUD autenticado de tecnologias por perfil.
+- Controle de acesso por usuário.
+- Camadas Model, Repository, Service e API implementadas.
+- Cobertura completa por testes automatizados.
+
 ## Próxima etapa — Modelo profissional estruturado
 
 - Modelar projetos, tecnologias, experiências profissionais, entregas e skills.

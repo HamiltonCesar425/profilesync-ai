@@ -1,13 +1,20 @@
-import pytest
+from collections.abc import Generator
 
-from database import Base, engine
+import pytest
+from sqlalchemy.orm import Session
+
+from database import Base, SessionLocal, engine
 
 
 @pytest.fixture(autouse=True)
-def reset_database() -> None:
+def reset_database() -> Generator[Session, None, None]:
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
-    yield
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
     Base.metadata.drop_all(bind=engine)

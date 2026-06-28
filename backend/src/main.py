@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from api.v1 import technology_routes
 from api.v1.ats_routes import router as ats_router
 from api.v1.profile_routes import router as profile_router
 from api.v1.auth_routes import router as auth_router
@@ -22,7 +23,7 @@ app = FastAPI(
 
 register_error_handlers(app)
 
-
+app.include_router(technology_routes.router)
 app.include_router(ats_router)
 app.include_router(profile_router)
 app.include_router(auth_router)
