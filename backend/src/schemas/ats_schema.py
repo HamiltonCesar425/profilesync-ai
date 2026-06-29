@@ -30,7 +30,7 @@ class ATSValidationResponse(BaseModel):
         ...,
         ge=0,
         le=100,
-        description="Pontuação ATS calculadora entre 0 e 100.",
+        description="Pontuação ATS calculada entre 0 e 100.",
     )
     status: ATSValidationStatus = Field(
         ..., description="Classificação geral da compatibilidade ATS."

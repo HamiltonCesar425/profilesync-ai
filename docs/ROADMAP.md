@@ -57,13 +57,14 @@
 - Camadas Model, Repository, Service e API implementadas.
 - Cobertura completa por testes automatizados.
 
-## Próxima etapa — Modelo profissional estruturado
+## Concluído — Modelo profissional estruturado (Fase 2)
 
-- Modelar projetos, tecnologias, experiências profissionais, entregas e skills.
-- Relacionar esses dados ao perfil do usuário.
-- Criar contratos, CRUDs e testes para as novas entidades.
-- Definir como esse contexto alimentará o campo `content` dos currículos.
-- Preparar a base para geração de currículos mais ricos, rastreáveis e reutilizáveis.
+- Modelagem de entidade Project.
+- Relacionamento entre projetos, perfil e tecnologias.
+- CRUD autenticado de projetos por perfil.
+- Controle de acesso por usuário.
+- Camadas Model, Repository, Service e API.
+- Testes automatizados para repository, service e API.
 
 ## Próxima etapa — Geração e revisão de conteúdo
 
