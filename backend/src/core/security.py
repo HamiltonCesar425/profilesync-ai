@@ -1,10 +1,13 @@
+import os
+import secrets
+
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from jose import jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = "change-this-secret-key"
+SECRET_KEY = os.getenv("PROFILESYNC_SECRET_KEY") or secrets.token_urlsafe(32)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
