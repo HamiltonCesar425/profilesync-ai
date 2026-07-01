@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from models.user_model import User
     from models.resume_model import Resume
     from models.project_model import Project
+    from models.professional_experience_model import ProfessionalExperienceModel
 
 
 class ProfileModel(Base):
@@ -47,6 +48,13 @@ class ProfileModel(Base):
     )
 
     projects: Mapped[list["Project"]] = relationship(
+        back_populates="profile",
+        cascade="all, delete-orphan",
+    )
+
+    professional_experiences: Mapped[
+        list["ProfessionalExperienceModel"]
+    ] = relationship(
         back_populates="profile",
         cascade="all, delete-orphan",
     )

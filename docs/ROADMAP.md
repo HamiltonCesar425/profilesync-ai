@@ -66,6 +66,15 @@
 - Camadas Model, Repository, Service e API.
 - Testes automatizados para repository, service e API.
 
+## Concluído — Modelo profissional estruturado (Fase 3)
+
+- Modelagem da entidade ProfessionalExperience.
+- Relacionamento entre experiências profissionais e perfil.
+- CRUD autenticado de experiências profissionais por perfil.
+- Controle de acesso por usuário proprietário do perfil.
+- Camadas Model, Repository, Service e API implementadas.
+- Testes automatizados para repository, service e API.
+
 ## Próxima etapa — Geração e revisão de conteúdo
 
 - Templates reutilizáveis de currículo e resumo profissional.
