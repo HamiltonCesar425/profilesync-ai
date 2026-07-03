@@ -61,5 +61,5 @@ class AuthService:
 
         return TokenResponse(
             access_token=self.create_user_access_token(user),
-            token_type="bearer",
+            token_type="bearer",  # nosec B106
         )
