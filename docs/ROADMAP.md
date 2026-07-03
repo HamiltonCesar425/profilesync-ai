@@ -102,3 +102,12 @@
 ## Princípio de segurança e controle do usuário
 
 Nenhuma integração futura deverá publicar, enviar, alterar ou distribuir conteúdo em serviços externos sem aprovação explícita do usuário.
+
+### Direcionamento Comercial
+
+A evolução orientada a produto e monetização passa a ser acompanhada em:
+
+docs/ROADMAP_COMERCIAL.md
+
+O roadmap técnico permanece como referência de arquitetura,
+qualidade e evolução interna.
