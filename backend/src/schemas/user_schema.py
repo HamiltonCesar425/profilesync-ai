@@ -22,8 +22,8 @@ class LoginRequest(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
-                "email": "teste@example.com",
-                "password": "strong-password",
+                "email": "teste@example.com",  # nosec B105
+                "password": "strong-password",  # nosec B105
             }
         }
     )
@@ -51,16 +51,16 @@ class TokenResponse(BaseModel):
         examples=["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."],
     )
     token_type: str = Field(
-        default="bearer",
+        default="bearer",  # nosec B105
         description="Tipo do token retornado.",
-        examples=["bearer"],
+        examples=["bearer"],  # nosec B105
     )
 
     model_config = ConfigDict(
         json_schema_extra={
-            "example": {
-                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                "token_type": "bearer",
+            "example": {  # nosec B105
+                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",  # nosec B105
+                "token_type": "bearer",  # nosec B105
             }
         }
     )
