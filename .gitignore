@@ -8,3 +8,4 @@ __pycache__/
 .env.*
 *.env
 htmlcov/
+.ci_venv/
