@@ -36,28 +36,20 @@ para MVP comercial.
 
 #### Fase 1 — Profile Intelligence Engine
 
-Objetivo:
+Status: Em desenvolvimento
 
-Transformar dados cadastrados em diagnóstico profissional.
+Implementado:
 
-Entrada:
+- Serviço de diagnóstico profissional.
+- Score inicial baseado em dados estruturados.
+- Identificação de pontos fortes.
+- Identificação de melhorias.
+- Recomendações iniciais.
+- Testes automatizados.
 
-- Perfil profissional.
-- Experiências.
-- Projetos.
-- Tecnologias.
-- Cargo alvo.
+Próximo:
 
-Saída:
-
-- Score profissional.
-- Pontos fortes.
-- Lacunas técnicas.
-- Sugestões de melhoria.
-
-Status:
-
-Planejado.
+- Expor análise via API autenticada.
 
 ---
 
