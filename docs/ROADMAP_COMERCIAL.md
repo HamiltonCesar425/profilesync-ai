@@ -34,34 +34,25 @@ para MVP comercial.
 
 ---
 
-#### Fase 1 — Profile Intelligence Engine
+#### Fase 1 concluída — Profile Intelligence Engine
 
-Status: Concluído
-
-Implementado:
-
-- Serviço de diagnóstico profissional.
-- Score inicial baseado em dados estruturados.
-- Identificação de pontos fortes do perfil.
-- Identificação de lacunas profissionais.
-- Recomendações iniciais de melhoria.
+- Diagnóstico profissional estruturado.
+- Score de maturidade profissional.
+- Identificação de forças.
+- Identificação de gaps técnicos.
+- Análise de compatibilidade com objetivo de carreira.
+- Recomendações priorizadas por impacto.
 - Exposição da análise via API autenticada.
 - Proteção por autenticação JWT.
 - Integração com perfis profissionais do usuário.
-- Testes automatizados de serviço e rota.
+- Testes automatizados.
 
 Validação:
 
 - Ruff aprovado.
 - Testes automatizados aprovados.
 - Cobertura mantida acima de 98%.
-- Auditoria de dependências sem vulnerabilidades conhecidas.
-
-Próximo:
-
-- Evoluir o motor de inteligência com análise contextual baseada em objetivo profissional.
-- Criar comparação entre perfil atual e vaga-alvo.
-- Implementar recomendações priorizadas por impacto profissional.
+- Auditoria de segurança sem vulnerabilidades conhecidas.
 
 ---
 
