@@ -3,8 +3,15 @@ from schemas.career_goal_schema import (
     CareerGoalRequest,
 )
 
+from services.impact_recommendation_service import (
+    ImpactRecommendationService,
+)
+
 
 class CareerIntelligenceService:
+    def __init__(self):
+        self.recommendation_service = ImpactRecommendationService()
+
     def analyze(
         self,
         goal: CareerGoalRequest,
@@ -31,12 +38,13 @@ class CareerIntelligenceService:
 
         score = int(len(matches) / len(expected) * 100) if expected else 0
 
-        recommendations = [f"Evoluir conhecimento em {gap}." for gap in gaps]
+        impact_recommendations = self.recommendation_service.generate(gaps)
 
         return CareerAnalysisResponse(
             target_role=goal.target_role.strip(),
             compatibility_score=score,
             strengths=matches,
             gaps=gaps,
-            recommendations=recommendations,
+            recommendations=impact_recommendations.recommendations,
         )
+

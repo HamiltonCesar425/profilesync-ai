@@ -1,5 +1,9 @@
 from pydantic import BaseModel
 
+from schemas.impact_recommendation_schema import (
+    ImpactRecommendation,
+)
+
 
 class CareerGoalRequest(BaseModel):
     target_role: str
@@ -11,4 +15,4 @@ class CareerAnalysisResponse(BaseModel):
     compatibility_score: int
     strengths: list[str]
     gaps: list[str]
-    recommendations: list[str]
+    recommendations: list[ImpactRecommendation]

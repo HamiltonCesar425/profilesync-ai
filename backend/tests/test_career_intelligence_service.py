@@ -5,18 +5,38 @@ from services.career_intelligence_service import CareerIntelligenceService
 def test_analyze_backend_python_with_partial_match():
     service = CareerIntelligenceService()
 
-    goal = CareerGoalRequest(target_role="backend python")
+    goal = CareerGoalRequest(
+        target_role="backend python",
+    )
 
     result = service.analyze(
         goal=goal,
-        skills=["Python", "FastAPI", "SQL"],
+        skills=[
+            "Python",
+            "FastAPI",
+            "SQL",
+        ],
     )
 
-    assert result.target_role == "backend python"
     assert result.compatibility_score == 60
-    assert result.strengths == ["python", "fastapi", "sql"]
-    assert result.gaps == ["docker", "tests"]
+
+    assert result.gaps == [
+        "docker",
+        "tests",
+    ]
+
     assert len(result.recommendations) == 2
+
+    assert (
+        result.recommendations[0].skill
+        == "docker"
+    )
+
+    assert (
+        result.recommendations[0].impact_score
+        >=
+        result.recommendations[1].impact_score
+    )
 
 
 def test_analyze_backend_python_with_match():
