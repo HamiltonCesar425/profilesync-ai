@@ -1,4 +1,4 @@
-from jose import jwt
+import jwt
 
 from core.security import (
     ALGORITHM,
@@ -46,3 +46,4 @@ def test_create_access_token() -> None:
 
     assert payload["sub"] == "user@example.com"
     assert "exp" in payload
+

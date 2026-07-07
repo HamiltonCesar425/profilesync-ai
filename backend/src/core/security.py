@@ -4,7 +4,7 @@ import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
-from jose import jwt
+import jwt
 from passlib.context import CryptContext
 
 SECRET_KEY = os.getenv("PROFILESYNC_SECRET_KEY") or secrets.token_urlsafe(32)
@@ -45,3 +45,4 @@ def create_access_token(data: dict[str, Any]) -> str:
         SECRET_KEY,
         algorithm=ALGORITHM,
     )
+

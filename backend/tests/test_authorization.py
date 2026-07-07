@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from jose import jwt
+import jwt
 
 from core.security import ALGORITHM, SECRET_KEY
 from main import app
@@ -76,3 +76,4 @@ def test_profiles_rejects_token_for_missing_user() -> None:
     )
 
     assert response.status_code == 401
+
