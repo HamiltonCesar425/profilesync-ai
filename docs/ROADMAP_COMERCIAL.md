@@ -56,7 +56,9 @@ Validação:
 
 ---
 
-#### Fase 2 — Comparação Perfil x Vaga
+#### Fase 2 — Comparação Perfil × Vaga
+
+Status: Em desenvolvimento avançado
 
 Objetivo:
 
@@ -64,17 +66,34 @@ Responder:
 
 "Estou preparado para esta oportunidade?"
 
-Funcionalidades:
+Implementado:
 
-- Cadastro ou colagem de descrição de vaga.
-- Extração de requisitos.
-- Comparação com perfil existente.
-- Score de compatibilidade.
-- Recomendações.
+- Cadastro estruturado de vagas.
+- Persistência de vagas associadas ao usuário autenticado.
+- CRUD completo de oportunidades profissionais.
+- Camada de modelo, schema, repositório, serviço e API.
+- Controle de acesso por usuário autenticado.
+- Extração inicial de requisitos técnicos da vaga.
+- Comparação entre requisitos da vaga e perfil profissional existente.
+- Cálculo de score de compatibilidade.
+- Identificação de requisitos atendidos.
+- Identificação de gaps profissionais.
+- Recomendações de evolução profissional.
+- Testes automatizados das camadas implementadas.
 
-Status:
+Qualidade e segurança:
 
-Planejado.
+- Validação automatizada com Ruff.
+- Cobertura de testes automatizados.
+- Auditoria de dependências com pip-audit.
+- Migração de autenticação JWT de python-jose para PyJWT.
+- Remoção de dependências transitivas vulneráveis/desnecessárias.
+
+Próximo:
+
+- Refinar algoritmo de compatibilidade.
+- Melhorar análise semântica de requisitos.
+- Preparar integração futura com IA assistida.
 
 ---
 
