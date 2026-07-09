@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from core.auth import get_current_user
 from database import get_db
 from models.user_model import User
+from repositories.job_repository import JobRepository
 from schemas.job_schema import JobCreate, JobResponse
 from services.job_service import JobService
 
@@ -20,7 +21,7 @@ def create_job(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> JobResponse:
-    service = JobService(db)
+    service = JobService(JobRepository(db))
     return service.create_job(payload, current_user.id)
 
 
@@ -32,5 +33,5 @@ def list_jobs(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> list[JobResponse]:
-    service = JobService(db)
+    service = JobService(JobRepository(db))
     return service.list_jobs(current_user.id)

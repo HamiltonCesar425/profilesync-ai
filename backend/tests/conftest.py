@@ -4,6 +4,7 @@ import pytest
 from sqlalchemy.orm import Session
 
 from database import Base, SessionLocal, engine
+from core.security import create_access_token
 from models.user_model import User
 
 
@@ -25,6 +26,7 @@ def reset_database() -> Generator[Session, None, None]:
 def db_session(reset_database: Session) -> Session:
     return reset_database
 
+
 def create_test_user(db_session: Session, email: str) -> User:
     user = User(
         email=email,
@@ -44,3 +46,9 @@ def test_user(db_session: Session) -> User:
 @pytest.fixture
 def other_user(db_session: Session) -> User:
     return create_test_user(db_session, "other@example.com")
+
+
+@pytest.fixture
+def auth_headers(test_user: User) -> dict[str, str]:
+    token = create_access_token(data={"sub": test_user.email})
+    return {"Authorization": f"Bearer {token}"}

@@ -58,7 +58,7 @@ Validação:
 
 #### Fase 2 — Comparação Perfil × Vaga
 
-Status: Em desenvolvimento avançado
+Status: Concluído
 
 Objetivo:
 
@@ -68,32 +68,43 @@ Responder:
 
 Implementado:
 
-- Cadastro estruturado de vagas.
+- Cadastro estruturado de vagas profissionais.
 - Persistência de vagas associadas ao usuário autenticado.
 - CRUD completo de oportunidades profissionais.
 - Camada de modelo, schema, repositório, serviço e API.
-- Controle de acesso por usuário autenticado.
-- Extração inicial de requisitos técnicos da vaga.
-- Comparação entre requisitos da vaga e perfil profissional existente.
+- Controle de acesso e isolamento de dados por usuário autenticado.
+- Extração automática de requisitos técnicos a partir da descrição da vaga.
+- Career Intelligence Engine para análise de compatibilidade.
+- API autenticada de análise profissional.
+- Endpoint de análise manual:
+  - POST /career-intelligence/analyze
+- Endpoint de análise baseada em vaga cadastrada:
+  - POST /career-intelligence/jobs/{job_id}/analyze
+- Comparação entre requisitos da vaga e competências profissionais.
 - Cálculo de score de compatibilidade.
-- Identificação de requisitos atendidos.
+- Identificação de competências alinhadas.
 - Identificação de gaps profissionais.
-- Recomendações de evolução profissional.
+- Recomendações priorizadas de evolução profissional.
+- Proteção contra acesso a análises de vagas pertencentes a outros usuários.
 - Testes automatizados das camadas implementadas.
 
 Qualidade e segurança:
 
 - Validação automatizada com Ruff.
-- Cobertura de testes automatizados.
+- Suíte completa de testes automatizados.
+- 188 testes aprovados.
+- Configuração centralizada de pytest na raiz do projeto.
+- Cobertura automatizada acima do requisito mínimo definido.
 - Auditoria de dependências com pip-audit.
 - Migração de autenticação JWT de python-jose para PyJWT.
 - Remoção de dependências transitivas vulneráveis/desnecessárias.
 
 Próximo:
 
-- Refinar algoritmo de compatibilidade.
-- Melhorar análise semântica de requisitos.
-- Preparar integração futura com IA assistida.
+- Evoluir análise semântica de requisitos.
+- Preparar camada de IA assistida.
+- Gerar sugestões inteligentes de melhoria profissional.
+- Refinar explicabilidade das recomendações.
 
 ---
 

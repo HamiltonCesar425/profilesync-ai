@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from api.v1.career_intelligence_routes import router as career_intelligence_router
 from api.v1.job_routes import router as job_router
 from api.v1.profile_intelligence_routes import router as profile_intelligence_router
 from api.v1 import professional_experience_routes
@@ -27,6 +28,7 @@ app = FastAPI(
 
 register_error_handlers(app)
 
+app.include_router(career_intelligence_router)
 app.include_router(job_router)
 app.include_router(profile_intelligence_router)
 app.include_router(professional_experience_routes.router)

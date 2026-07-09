@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from schemas.impact_recommendation_schema import (
     ImpactRecommendation,
@@ -7,6 +7,8 @@ from schemas.impact_recommendation_schema import (
 
 class CareerGoalRequest(BaseModel):
     target_role: str
+    description: str | None = None
+    skills: list[str] = Field(default_factory=list)
     seniority: str | None = None
 
 
