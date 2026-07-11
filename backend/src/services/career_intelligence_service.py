@@ -1,10 +1,10 @@
-from services.job_requirement_extractor import JobRequirementExtractor
 from schemas.career_goal_schema import (
     CareerAnalysisResponse,
     CareerGoalRequest,
 )
-
+from services.career_action_plan_service import CareerActionPlanService
 from services.impact_recommendation_service import ImpactRecommendationService
+from services.job_requirement_extractor import JobRequirementExtractor
 
 
 class CareerIntelligenceService:
@@ -22,11 +22,13 @@ class CareerIntelligenceService:
         self,
         requirement_extractor: JobRequirementExtractor | None = None,
         recommendation_service: ImpactRecommendationService | None = None,
+        action_plan_service: CareerActionPlanService | None = None,
     ) -> None:
         self.requirement_extractor = requirement_extractor or JobRequirementExtractor()
         self.recommendation_service = (
             recommendation_service or ImpactRecommendationService()
         )
+        self.action_plan_service = action_plan_service or CareerActionPlanService()
 
     def analyze(
         self,
@@ -45,12 +47,18 @@ class CareerIntelligenceService:
 
         impact_recommendations = self.recommendation_service.generate(gaps)
 
+        action_plan = self.action_plan_service.build_plan(
+            current_score=score,
+            missing_skills=gaps,
+        )
+
         return CareerAnalysisResponse(
             target_role=goal.target_role.strip(),
             compatibility_score=score,
             strengths=matches,
             gaps=gaps,
             recommendations=impact_recommendations.recommendations,
+            action_plan=action_plan,
         )
 
     def _get_required_skills(self, goal: CareerGoalRequest) -> list[str]:

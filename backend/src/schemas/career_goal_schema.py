@@ -1,8 +1,7 @@
 from pydantic import BaseModel, Field
 
-from schemas.impact_recommendation_schema import (
-    ImpactRecommendation,
-)
+from schemas.career_action_plan_schema import CareerActionPlanResponse
+from schemas.impact_recommendation_schema import ImpactRecommendation
 
 
 class CareerGoalRequest(BaseModel):
@@ -18,3 +17,4 @@ class CareerAnalysisResponse(BaseModel):
     strengths: list[str]
     gaps: list[str]
     recommendations: list[ImpactRecommendation]
+    action_plan: CareerActionPlanResponse
