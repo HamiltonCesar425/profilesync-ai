@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 
 from models.user_model import User
 from repositories.user_repository import UserRepository
-from schemas.user_schema import TokenResponse, UserCreate
+from schemas.user_schema import AUTH_SCHEME, TokenResponse, UserCreate
 from core.security import (
     create_access_token,
     get_password_hash,
@@ -61,5 +61,5 @@ class AuthService:
 
         return TokenResponse(
             access_token=self.create_user_access_token(user),
-            token_type="bearer",  # nosec B106
+            token_type=AUTH_SCHEME,
         )

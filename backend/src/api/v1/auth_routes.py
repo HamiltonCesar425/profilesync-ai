@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.dependencies import get_auth_service
+from core.login_rate_limiter import login_rate_limiter
 from schemas.user_schema import TokenResponse, UserCreate, UserResponse
 from services.auth_service import AuthService
 
@@ -44,10 +45,23 @@ def register_user(
     ),
 )
 def login(
+    request: Request,
     form_data: OAuth2PasswordRequestForm = Depends(),
     auth_service: AuthService = Depends(get_auth_service),
 ) -> TokenResponse:
-    return auth_service.login(
-        email=form_data.username,
-        password=form_data.password,
-    )
+    client_host = request.client.host if request.client else "unknown"
+    attempt_key = f"{client_host}:{form_data.username.strip().casefold()}"
+    login_rate_limiter.check(attempt_key)
+
+    try:
+        response = auth_service.login(
+            email=form_data.username,
+            password=form_data.password,
+        )
+    except HTTPException as exc:
+        if exc.status_code == status.HTTP_401_UNAUTHORIZED:
+            login_rate_limiter.record_failure(attempt_key)
+        raise
+
+    login_rate_limiter.reset(attempt_key)
+    return response

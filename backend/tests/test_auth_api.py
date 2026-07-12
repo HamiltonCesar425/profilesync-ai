@@ -85,3 +85,19 @@ def test_login_with_invalid_email() -> None:
     )
 
     assert response.status_code == 401
+
+
+def test_login_is_rate_limited_after_repeated_failures() -> None:
+    payload = {
+        "username": "rate-limited@example.com",
+        "password": "wrong-password",
+    }
+
+    for _ in range(5):
+        response = client.post("/auth/login", data=payload)
+        assert response.status_code == 401
+
+    response = client.post("/auth/login", data=payload)
+
+    assert response.status_code == 429
+    assert "Retry-After" in response.headers

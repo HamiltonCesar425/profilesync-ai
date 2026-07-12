@@ -5,7 +5,10 @@ from core.auth import get_current_user
 from database.session import get_db
 from models.user_model import User
 from repositories.job_repository import JobRepository
-from schemas.career_goal_schema import CareerGoalRequest
+from schemas.career_goal_schema import (
+    CareerAnalysisResponse,
+    CareerGoalRequest,
+)
 from services.career_intelligence_service import CareerIntelligenceService
 from services.job_service import JobNotFoundError, JobService
 
@@ -15,11 +18,14 @@ router = APIRouter(
 )
 
 
-@router.post("/analyze")
+@router.post(
+    "/analyze",
+    response_model=CareerAnalysisResponse,
+)
 def analyze_career_goal(
     request: CareerGoalRequest,
     current_user: User = Depends(get_current_user),
-):
+) -> CareerAnalysisResponse:
     service = CareerIntelligenceService()
 
     return service.analyze(
@@ -28,16 +34,23 @@ def analyze_career_goal(
     )
 
 
-@router.post("/jobs/{job_id}/analyze")
+@router.post(
+    "/jobs/{job_id}/analyze",
+    response_model=CareerAnalysisResponse,
+)
 def analyze_registered_job(
     job_id: int,
     request: CareerGoalRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
-):
+) -> CareerAnalysisResponse:
     job_service = JobService(JobRepository(db))
+
     try:
-        job = job_service.get_job(job_id=job_id, user_id=current_user.id)
+        job = job_service.get_job(
+            job_id=job_id,
+            user_id=current_user.id,
+        )
     except JobNotFoundError as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

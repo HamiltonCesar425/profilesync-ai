@@ -2,6 +2,10 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
+AUTH_SCHEME = "bearer"
+OPENAPI_CREDENTIAL_SAMPLE = "strong-password"
+OPENAPI_JWT_SAMPLE = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -16,14 +20,14 @@ class LoginRequest(BaseModel):
         ...,
         min_length=8,
         description="Senha do usuário.",
-        examples=["strong-password"],
+        examples=[OPENAPI_CREDENTIAL_SAMPLE],
     )
 
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
-                "email": "teste@example.com",  # nosec B105
-                "password": "strong-password",  # nosec B105
+                "email": "teste@example.com",
+                "password": OPENAPI_CREDENTIAL_SAMPLE,
             }
         }
     )
@@ -48,19 +52,19 @@ class TokenResponse(BaseModel):
     access_token: str = Field(
         ...,
         description="Token JWT de acesso.",
-        examples=["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."],
+        examples=[OPENAPI_JWT_SAMPLE],
     )
     token_type: str = Field(
-        default="bearer",  # nosec B105
+        default=AUTH_SCHEME,
         description="Tipo do token retornado.",
-        examples=["bearer"],  # nosec B105
+        examples=[AUTH_SCHEME],
     )
 
     model_config = ConfigDict(
         json_schema_extra={
-            "example": {  # nosec B105
-                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",  # nosec B105
-                "token_type": "bearer",  # nosec B105
+            "example": {
+                "access_token": OPENAPI_JWT_SAMPLE,
+                "token_type": AUTH_SCHEME,
             }
         }
     )

@@ -1,15 +1,23 @@
 from collections.abc import Generator
+import os
+
+os.environ.setdefault(
+    "PROFILESYNC_SECRET_KEY",
+    "test-only-secret-key-that-is-long-enough-for-automated-tests",
+)
 
 import pytest
 from sqlalchemy.orm import Session
 
 from database import Base, SessionLocal, engine
+from core.login_rate_limiter import login_rate_limiter
 from core.security import create_access_token
 from models.user_model import User
 
 
 @pytest.fixture(autouse=True)
 def reset_database() -> Generator[Session, None, None]:
+    login_rate_limiter.reset()
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
@@ -20,6 +28,7 @@ def reset_database() -> Generator[Session, None, None]:
         db.close()
 
     Base.metadata.drop_all(bind=engine)
+    login_rate_limiter.reset()
 
 
 @pytest.fixture
