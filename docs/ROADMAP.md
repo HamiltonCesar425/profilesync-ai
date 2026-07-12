@@ -75,13 +75,18 @@
 - Camadas Model, Repository, Service e API implementadas.
 - Testes automatizados para repository, service e API.
 
-## Próxima etapa — Geração e revisão de conteúdo
+## Concluído — Geração e revisão de conteúdo
 
 - Templates reutilizáveis de currículo e resumo profissional.
 - Geração assistida por IA com transparência sobre origem e uso dos dados.
 - Fluxo de revisão manual antes de qualquer uso externo.
 - Histórico de versões de conteúdo profissional.
 - Separação entre versões ATS-friendly e versões visuais/humanizadas.
+- Career Intelligence completo.
+- Comparação Perfil x Vaga.
+- Plano de ação personalizadas.
+- APIs autenticadas.
+- Cobertura de testes elevada.
 
 ## Evoluções posteriores
 

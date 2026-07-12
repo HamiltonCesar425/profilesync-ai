@@ -8,6 +8,18 @@ A plataforma disponibiliza uma API REST desenvolvida com FastAPI para gerenciame
 
 Os modelos de Inteligência Artificial são considerados componentes de processamento e poderão evoluir ao longo do tempo. O principal ativo da plataforma é o conhecimento estruturado persistido, independente do modelo de IA utilizado.
 
+## Componentes implementados
+
+| Componente     | Responsabilidade                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `api/v1`       | Rotas HTTP para autenticação, perfis, currículos, projetos, tecnologias, experiências profissionais, vagas, inteligência de perfil, inteligência de carreira, exportação e validação ATS.                                                                                                                                                                                                                                                        |
+| `schemas`      | Contratos Pydantic de entrada e saída da API, incluindo modelos de análise de perfil, análise de carreira, recomendações de impacto e planos de ação.                                                                                                                                                                                                                                                                                            |
+| `services`     | Camada de regras de negócio. Implementa autenticação, autorização por usuário, gerenciamento dos ativos profissionais, exportação, validação ATS, análise de perfil (`ProfileIntelligenceService`), análise de carreira (`CareerIntelligenceService`), geração de recomendações de impacto (`ImpactRecommendationService`), extração de requisitos de vagas (`JobRequirementExtractor`) e geração de planos de ação (`CareerActionPlanService`). |
+| `repositories` | Persistência dos dados utilizando SQLAlchemy e isolamento do acesso ao banco de dados.                                                                                                                                                                                                                                                                                                                                                           |
+| `models`       | Modelos ORM que representam os ativos persistidos da plataforma e seus relacionamentos.                                                                                                                                                                                                                                                                                                                                                          |
+| `exporters`    | Transformação dos ativos de conhecimento em formatos externos (Markdown, PDF, DOCX e futuras extensões).                                                                                                                                                                                                                                                                                                                                         |
+| `core`         | Configuração da aplicação, autenticação JWT, segurança, controle de acesso, rate limiting, logging e componentes compartilhados.                                                                                                                                                                                                                                                                                                                 |
+
 ```text
 Cliente HTTP / Frontend
             │
@@ -18,7 +30,17 @@ Cliente HTTP / Frontend
       API FastAPI
             │
             ▼
-        Services
+ ┌─────────────────────────────┐
+ │ Camada de Services          │
+ │                             │
+ │ • AuthService               │
+ │ • ProfileService            │
+ │ • ResumeService             │
+ │ • JobService                │
+ │ • ProfileIntelligenceService│
+ │ • CareerIntelligenceService │
+ │ • ATSValidationService      │
+ └─────────────────────────────┘
             │
             ▼
      Repositories
@@ -37,17 +59,21 @@ O banco local atual é SQLite em `backend/data/profilesync.db`.
 
 PostgreSQL permanece como evolução planejada e não faz parte da implementação vigente.
 
-## Componentes implementados
+---
 
-| Componente     | Responsabilidade                                                                                                         |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `api/v1`       | Rotas HTTP para autenticação, perfis, currículos, experiências profissionais, exportação e validação ATS.                |
-| `schemas`      | Contratos Pydantic de entrada e saída, incluindo experiências profissionais vinculadas a perfis.                        |
-| `services`     | Regras de negócio, autorização por usuário, experiências profissionais, exportação e validação ATS baseada em regras.    |
-| `repositories` | Persistência com SQLAlchemy.                                                                                             |
-| `models`       | Modelos ORM que representam os ativos persistidos da plataforma e seus relacionamentos.                                  |
-| `exporters`    | Responsável pela transformação dos ativos de conhecimento em formatos externos (Markdown, PDF, DOCX e futuros formatos). |
-| `core`         | Configuração, JWT, segurança e logging.                                                                                  |
+## Fluxo da Inteligência de Carreira
+
+```text
+CareerIntelligenceService
+        │
+        ├── JobRequirementExtractor
+        ├── ImpactRecommendationService
+        └── CareerActionPlanService
+```
+
+O `CareerIntelligenceService` atua como orquestrador da análise de carreira. Ele coordena a extração de requisitos da vaga, identifica lacunas de competências, gera recomendações priorizadas e produz um plano de ação personalizado para o usuário.
+
+---
 
 ## Motor de validação ATS
 
@@ -114,16 +140,16 @@ Os campos legados por seção (`experience`, `skills`, `education` etc.) não fa
 
 Uma experiência profissional pertence a um perfil. O acesso é autorizado pela posse desse perfil pelo usuário autenticado.
 
-| Campo                                | Tipo             | Regra                                             |
-| ------------------------------------ | ---------------- | ------------------------------------------------- |
-| `id`, `profile_id`                   | inteiro          | Identificadores da experiência e do perfil.       |
-| `company_name`                       | string           | Nome da empresa; máximo de 200 caracteres.        |
-| `position`                           | string           | Cargo ou função; máximo de 150 caracteres.        |
-| `employment_type`, `work_model`      | string ou `null` | Tipo de contrato e modelo de trabalho.             |
-| `location`, `description`            | string ou `null` | Localização e descrição das atividades.            |
-| `start_date`, `end_date`             | data ou `null`   | Início obrigatório; término opcional.              |
-| `is_current`                         | booleano         | Indica vínculo profissional atual.                 |
-| `created_at`, `updated_at`           | datetime         | Gerados e atualizados pelo servidor.               |
+| Campo                           | Tipo             | Regra                                       |
+| ------------------------------- | ---------------- | ------------------------------------------- |
+| `id`, `profile_id`              | inteiro          | Identificadores da experiência e do perfil. |
+| `company_name`                  | string           | Nome da empresa; máximo de 200 caracteres.  |
+| `position`                      | string           | Cargo ou função; máximo de 150 caracteres.  |
+| `employment_type`, `work_model` | string ou `null` | Tipo de contrato e modelo de trabalho.      |
+| `location`, `description`       | string ou `null` | Localização e descrição das atividades.     |
+| `start_date`, `end_date`        | data ou `null`   | Início obrigatório; término opcional.       |
+| `is_current`                    | booleano         | Indica vínculo profissional atual.          |
+| `created_at`, `updated_at`      | datetime         | Gerados e atualizados pelo servidor.        |
 
 ## Autenticação
 
@@ -327,13 +353,13 @@ Todas essas representações derivam do mesmo conjunto de ativos de conhecimento
 
 ### Experiências profissionais
 
-| Método   | Rota                                                    | Resultado                                                   |
-| -------- | ------------------------------------------------------- | ----------------------------------------------------------- |
-| `POST`   | `/profiles/{profile_id}/experiences`                    | Cria uma experiência para o perfil; responde `201`.         |
-| `GET`    | `/profiles/{profile_id}/experiences`                    | Lista as experiências do perfil.                            |
-| `GET`    | `/profiles/{profile_id}/experiences/{experience_id}`    | Retorna uma experiência profissional.                       |
-| `PUT`    | `/profiles/{profile_id}/experiences/{experience_id}`    | Atualiza uma experiência profissional.                      |
-| `DELETE` | `/profiles/{profile_id}/experiences/{experience_id}`    | Remove uma experiência profissional; responde `204`.        |
+| Método   | Rota                                                 | Resultado                                            |
+| -------- | ---------------------------------------------------- | ---------------------------------------------------- |
+| `POST`   | `/profiles/{profile_id}/experiences`                 | Cria uma experiência para o perfil; responde `201`.  |
+| `GET`    | `/profiles/{profile_id}/experiences`                 | Lista as experiências do perfil.                     |
+| `GET`    | `/profiles/{profile_id}/experiences/{experience_id}` | Retorna uma experiência profissional.                |
+| `PUT`    | `/profiles/{profile_id}/experiences/{experience_id}` | Atualiza uma experiência profissional.               |
+| `DELETE` | `/profiles/{profile_id}/experiences/{experience_id}` | Remove uma experiência profissional; responde `204`. |
 
 ### Exportação
 

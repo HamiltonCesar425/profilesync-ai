@@ -88,27 +88,37 @@ Implementado:
 - Proteção contra acesso a análises de vagas pertencentes a outros usuários.
 - Testes automatizados das camadas implementadas.
 
-Qualidade e segurança:
+---
 
-- Validação automatizada com Ruff.
-- Suíte completa de testes automatizados.
-- 188 testes aprovados.
-- Configuração centralizada de pytest na raiz do projeto.
-- Cobertura automatizada acima do requisito mínimo definido.
-- Auditoria de dependências com pip-audit.
-- Migração de autenticação JWT de python-jose para PyJWT.
-- Remoção de dependências transitivas vulneráveis/desnecessárias.
+#### Fase 3 — Career Action Plan Engine
 
-Próximo:
+Status: Concluído
 
-- Evoluir análise semântica de requisitos.
-- Preparar camada de IA assistida.
-- Gerar sugestões inteligentes de melhoria profissional.
-- Refinar explicabilidade das recomendações.
+Objetivo:
+
+Responder:
+
+"O que devo fazer para conquistar esta oportunidade?"
+
+Implementado:
+
+- CareerActionPlanService.
+- Geração automática de planos de ação personalizados.
+- Priorização das ações por impacto.
+- Recomendações organizadas em etapas.
+- Definição de prazos sugeridos.
+- Integração ao Career Intelligence Engine.
+- Exposição do plano de ação via API autenticada.
+- Contratos específicos para resposta do plano de ação.
+- Testes automatizados das novas regras de negócio.
+
+Resultado:
+
+O ProfileSync AI passa a orientar o usuário sobre quais competências desenvolver e em qual ordem, transformando a análise de compatibilidade em um plano prático de evolução profissional.
 
 ---
 
-#### Fase 3 — IA Assistida
+#### Fase 4 — IA Assistida
 
 Objetivo:
 
@@ -134,7 +144,7 @@ Planejado.
 
 ---
 
-#### Fase 4 — Interface MVP
+#### Fase 5 — Interface MVP
 
 Objetivo:
 
@@ -154,7 +164,7 @@ Planejado.
 
 ---
 
-#### Fase 5 — Validação Comercial
+#### Fase 6 — Validação Comercial
 
 Objetivo:
 
@@ -179,3 +189,16 @@ As seguintes funcionalidades ficam adiadas:
 - Dashboards avançados.
 - Recursos corporativos.
 - Customizações complexas.
+
+---
+
+##### Qualidade e Segurança
+
+- Validação automatizada com Ruff.
+- Suíte completa de testes automatizados.
+- 188 testes aprovados.
+- Configuração centralizada de pytest na raiz do projeto.
+- Cobertura automatizada acima do requisito mínimo definido.
+- Auditoria de dependências com pip-audit.
+- Migração da autenticação JWT de python-jose para PyJWT.
+- Remoção de dependências transitivas vulneráveis e desnecessárias.
