@@ -11,6 +11,7 @@ from api.v1.profile_routes import router as profile_router
 from api.v1.auth_routes import router as auth_router
 from api.v1.resume_routes import router as resume_router
 from api.v1.export_routes import router as export_router
+from api.v1.ai_assistant_routes import router as ai_assistant_router
 from app.error_handlers import register_error_handlers
 from core.logging_config import configure_logging
 from database.session import Base, engine
@@ -39,6 +40,7 @@ app.include_router(profile_router)
 app.include_router(auth_router)
 app.include_router(resume_router)
 app.include_router(export_router)
+app.include_router(ai_assistant_router)
 
 
 @app.get("/")
