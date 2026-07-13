@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Protocol
 
+from core.exceptions import AIResponseError
 
 class AIProvider(Protocol):
     def generate(self, prompt: str) -> str:
@@ -11,10 +12,6 @@ class AIProvider(Protocol):
 class TextImprovementResult:
     original_text: str
     improved_text: str
-
-
-class AIProviderError(RuntimeError):
-    """Raised when the AI provider cannot generate a valid response."""
 
 
 class AIAssistantService:
@@ -34,7 +31,7 @@ class AIAssistantService:
         improved_text = self._provider.generate(prompt).strip()
 
         if not improved_text:
-            raise AIProviderError(
+            raise AIResponseError(
                 "AI provider returned an empty professional description."
             )
 

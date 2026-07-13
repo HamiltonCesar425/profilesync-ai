@@ -1,16 +1,13 @@
 from fastapi import APIRouter, Depends
 
 from core.auth import get_current_user
+from integrations.openai_client import OpenAIClient
 from models.user_model import User
 from schemas.ai_assistant_schema import (
     ImproveProfessionalDescriptionRequest,
     ImproveProfessionalDescriptionResponse,
 )
 from services.ai_assistant_service import AIAssistantService
-from services.providers.provider_factory import (
-    create_ai_provider,
-)
-
 
 router = APIRouter(
     prefix="/ai-assistant",
@@ -20,7 +17,7 @@ router = APIRouter(
 
 def get_ai_assistant_service() -> AIAssistantService:
     return AIAssistantService(
-        provider=create_ai_provider(),
+        provider=OpenAIClient(),
     )
 
 

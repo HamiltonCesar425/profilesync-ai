@@ -82,3 +82,27 @@ def test_improve_professional_description_rejects_empty_text():
     app.dependency_overrides.clear()
 
     assert response.status_code == 422
+
+
+def test_get_ai_assistant_service_builds_service_with_openai_client(
+    monkeypatch,
+) -> None:
+    fake_client = object()
+    captured: dict[str, object] = {}
+
+    class FakeService:
+        def __init__(self, provider: object) -> None:
+            captured["provider"] = provider
+
+    monkeypatch.setattr(
+        "api.v1.ai_assistant_routes.OpenAIClient",
+        lambda: fake_client,
+    )
+    monkeypatch.setattr(
+        "api.v1.ai_assistant_routes.AIAssistantService",
+        FakeService,
+    )
+
+    get_ai_assistant_service()
+
+    assert captured["provider"] is fake_client

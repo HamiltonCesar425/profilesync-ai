@@ -1,8 +1,8 @@
 import pytest
 
+from core.exceptions import AIResponseError
 from services.ai_assistant_service import (
     AIAssistantService,
-    AIProviderError,
 )
 
 
@@ -71,7 +71,7 @@ def test_improve_professional_description_rejects_empty_provider_response(
     service = AIAssistantService(provider)
 
     with pytest.raises(
-        AIProviderError,
+        AIResponseError,
         match="AI provider returned an empty professional description.",
     ):
         service.improve_professional_description("Desenvolvi APIs com Python.")
