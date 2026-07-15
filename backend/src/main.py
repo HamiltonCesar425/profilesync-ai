@@ -1,7 +1,10 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from api.v1.career_intelligence_routes import router as career_intelligence_router
 from api.v1.job_routes import router as job_router
+from core.settings import CORS_ALLOWED_ORIGINS
+
 from api.v1.profile_intelligence_routes import router as profile_intelligence_router
 from api.v1 import professional_experience_routes
 from api.v1.project_routes import router as project_router
@@ -18,13 +21,20 @@ from database.session import Base, engine
 
 configure_logging()
 
-
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="ProfileSync AI API",
     version="0.1.0",
     description="API para gestão e geração assistida de perfis profissionais.",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 register_error_handlers(app)
@@ -41,7 +51,6 @@ app.include_router(auth_router)
 app.include_router(resume_router)
 app.include_router(export_router)
 app.include_router(ai_assistant_router)
-
 
 @app.get("/")
 def read_root():
