@@ -12,14 +12,14 @@ A métrica principal deste roadmap é:
 
 ---
 
-### Estado atual do produto
+### Fundação da Plataforma
 
-### Fundação concluída
+Concluído
 
-- API FastAPI estruturada em camadas.
+- API FastAPI em arquitetura em camadas.
 - Autenticação JWT.
 - Gestão de usuários.
-- Gestão de perfis profissionais.
+- Gestão de perfis.
 - Gestão de currículos.
 - Gestão de experiências.
 - Gestão de projetos.
@@ -27,10 +27,24 @@ A métrica principal deste roadmap é:
 - Exportação ATS-friendly.
 - Validação ATS.
 - Testes automatizados.
-- Segurança e qualidade automatizada.
+- Segurança automatizada.
 
-O produto possui base técnica suficiente para iniciar a transição
-para MVP comercial.
+---
+
+### Estado atual do produto
+
+Fase 1 — Concluída
+Fase 2 — Concluída
+Fase 3 — Concluída
+Fase 4 — Concluída
+Fase 5 — Planejada
+
+---
+
+Evoluções Pós-MVP
+
+• Career Identity Engine
+• (futuras funcionalidades)
 
 ---
 
@@ -120,27 +134,73 @@ O ProfileSync AI passa a orientar o usuário sobre quais competências desenvolv
 
 #### Fase 4 — IA Assistida
 
-Objetivo:
+Status: Concluído
 
-Utilizar IA como camada de melhoria, não como fonte única.
+Objetivo
 
-Fluxo:
+Utilizar Inteligência Artificial como uma camada de aprimoramento da plataforma, preservando as regras de negócio como fonte principal de decisão.
+
+Fluxo adotado:
 
 Dados estruturados
-→ Regras internas
-→ IA
+
+→ Regras de negócio
+
+→ Inteligência Artificial
+
 → Sugestão
+
 → Aprovação do usuário
 
-Funcionalidades:
+Implementado
+Integração com a API oficial da OpenAI utilizando o SDK oficial.
+Camada de integração desacoplada (OpenAIClient).
+Configuração do modelo de IA via variáveis de ambiente.
+Arquitetura preparada para substituição ou expansão de provedores de IA.
+Serviço AIAssistantService responsável pela orquestração das funcionalidades assistidas.
+Endpoint autenticado para melhoria de descrições profissionais:
+POST /ai-assistant/improve-professional-description
+Melhoria automática de descrições profissionais mantendo o contexto informado pelo usuário.
+Contratos específicos para requisição e resposta da IA.
+Tratamento de exceções de domínio para falhas de configuração, indisponibilidade do provedor e respostas inválidas.
+Cobertura completa por testes automatizados.
+Validação estática com Ruff.
+Compatibilidade com a arquitetura em camadas adotada pelo projeto.
+Resultado
 
-- Melhorar descrições profissionais.
-- Otimizar currículo.
-- Gerar versões específicas por vaga.
+A Inteligência Artificial passa a atuar como um mecanismo de refinamento de conteúdo, preservando o conhecimento estruturado do usuário como principal ativo da plataforma e mantendo a IA como uma camada complementar de geração de valor.
 
-Status:
+---
 
-Planejado.
+---
+
+| Evolução Estratégica — Career Identity Engine
+
+| Status: Planejado (Pós-MVP)
+
+Objetivo
+
+Evoluir o mecanismo atual de comparação Perfil × Vaga para um modelo capaz de identificar e explicar a identidade profissional do usuário e da oportunidade analisada.
+
+Funcionalidades previstas
+Identificação automática da identidade profissional predominante da vaga.
+Identificação automática da identidade profissional construída pelo usuário ao longo da carreira.
+Explicação transparente dos fatores que geram aderência ou divergência entre ambos.
+Recomendações de evolução profissional considerando contexto de carreira e não apenas competências técnicas.
+Apoio à transição de carreira baseado em trajetória profissional.
+Valor para o usuário
+
+Responder perguntas como:
+
+"Qual identidade profissional construí ao longo da minha carreira?"
+"Esta vaga realmente representa minha especialização?"
+"Por que minha experiência não transmite o posicionamento profissional que desejo?"
+"Quais mudanças devo realizar para migrar para outra especialização?"
+Justificativa comercial
+
+Enquanto a maioria das plataformas compara apenas tecnologias ou palavras-chave, o ProfileSync AI evoluirá para comparar identidades profissionais, tornando a análise mais contextualizada, explicável e útil para decisões de carreira.
+
+Essa funcionalidade reforça o posicionamento do produto como uma plataforma de inteligência profissional, ampliando seu diferencial competitivo.
 
 ---
 
