@@ -1,4 +1,4 @@
-import os
+from core.settings import PROFILESYNC_SECRET_KEY
 
 from datetime import datetime, timedelta, timezone
 from typing import Any
@@ -6,11 +6,12 @@ from typing import Any
 import jwt
 from passlib.context import CryptContext
 
-SECRET_KEY = os.getenv("PROFILESYNC_SECRET_KEY")
-if not SECRET_KEY:
+
+if not PROFILESYNC_SECRET_KEY:
     raise RuntimeError(
         "PROFILESYNC_SECRET_KEY must be configured with a persistent random secret."
     )
+SECRET_KEY = PROFILESYNC_SECRET_KEY
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
