@@ -10,6 +10,17 @@ export interface LoginResponse {
   token_type: string;
 }
 
+export interface RegisterRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterResponse {
+  id: number;
+  email: string;
+  created_at: string;
+}
+
 export async function login(credentials: LoginRequest): Promise<LoginResponse> {
   const formData = new URLSearchParams();
 
@@ -24,6 +35,17 @@ export async function login(credentials: LoginRequest): Promise<LoginResponse> {
         "Content-Type": "application/x-www-form-urlencoded",
       },
     },
+  );
+
+  return response.data;
+}
+
+export async function register(
+  userData: RegisterRequest,
+): Promise<RegisterResponse> {
+  const response = await httpClient.post<RegisterResponse>(
+    "/auth/register",
+    userData,
   );
 
   return response.data;

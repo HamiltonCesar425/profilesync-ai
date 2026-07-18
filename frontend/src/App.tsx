@@ -4,6 +4,7 @@ import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { useAuth } from "./auth/useAuth";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
+import { RegisterPage } from "./pages/RegisterPage";
 
 export default function App(): React.JSX.Element {
   const { isAuthenticated } = useAuth();
@@ -13,6 +14,13 @@ export default function App(): React.JSX.Element {
       <Route
         path="/login"
         element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />}
+      />
+
+      <Route
+        path="/register"
+        element={
+          isAuthenticated ? <Navigate to="/" replace /> : <RegisterPage />
+        }
       />
 
       <Route element={<ProtectedRoute />}>
