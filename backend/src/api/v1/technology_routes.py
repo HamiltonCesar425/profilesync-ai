@@ -140,4 +140,3 @@ def delete_technology(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(exc),
         ) from exc
-    
