@@ -50,3 +50,291 @@ p {
   font-size: 1.125rem;
   line-height: 1.6;
 }
+
+.professional-experiences-page {
+  display: block;
+  width: 100%;
+  max-width: 72rem;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  text-align: left;
+}
+
+.professional-experiences-page h1 {
+  font-size: clamp(2.25rem, 6vw, 4rem);
+}
+
+.professional-experiences-page p {
+  max-width: none;
+  margin: 0;
+}
+
+.professional-experiences-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.professional-experiences-header > div {
+  flex: 1;
+}
+
+.professional-experiences-header p {
+  margin-top: 0.75rem;
+}
+
+.professional-experiences-profile-selector {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 32rem;
+  margin-bottom: 2rem;
+}
+
+.professional-experiences-profile-selector label {
+  font-weight: 600;
+}
+
+.professional-experiences-profile-selector select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+}
+
+.professional-experience-form {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 40rem;
+  margin: 2rem 0;
+  padding: 2rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+}
+
+.professional-experience-form h2 {
+  margin: 0;
+}
+
+.professional-experience-field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.professional-experience-field label {
+  font-weight: 600;
+}
+
+.professional-experience-field input,
+.professional-experience-field select,
+.professional-experience-field textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+}
+
+.professional-experience-field textarea {
+  min-height: 10rem;
+  resize: vertical;
+}
+
+.professional-experience-field input:focus,
+.professional-experience-field select:focus,
+.professional-experience-field textarea:focus {
+  border-color: #374151;
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px rgb(55 65 81 / 15%);
+}
+
+.professional-experience-field input:disabled,
+.professional-experience-field select:disabled,
+.professional-experience-field textarea:disabled {
+  cursor: not-allowed;
+  background-color: #f3f4f6;
+}
+
+.professional-experience-checkbox-field label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+}
+
+.professional-experience-checkbox-field input {
+  width: 1rem;
+  height: 1rem;
+}
+
+.professional-experience-form-actions,
+.professional-experience-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primary-button,
+.secondary-button,
+.professional-experiences-header button,
+.professional-experience-actions button {
+  padding: 0.7rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.primary-button,
+.professional-experiences-header button {
+  border: 1px solid #111827;
+  color: #ffffff;
+  background-color: #111827;
+}
+
+.secondary-button,
+.professional-experience-actions button {
+  border: 1px solid #d1d5db;
+  color: #111827;
+  background-color: #ffffff;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled,
+.professional-experiences-header button:disabled,
+.professional-experience-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.feedback-message {
+  margin-bottom: 1.5rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.feedback-message-error {
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+  background-color: #fef2f2;
+}
+
+.feedback-message-success {
+  border: 1px solid #86efac;
+  color: #166534;
+  background-color: #f0fdf4;
+}
+
+.professional-experiences-list {
+  margin-top: 2rem;
+}
+
+.professional-experiences-list h2 {
+  margin-bottom: 1rem;
+}
+
+.professional-experiences-items {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.professional-experience-card {
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+}
+
+.professional-experience-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.professional-experience-card h3 {
+  margin: 0;
+}
+
+.professional-experience-card-header p {
+  margin-top: 0.25rem;
+}
+
+.professional-experience-current {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  color: #166534;
+  background-color: #dcfce7;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.professional-experience-card dl {
+  display: grid;
+  grid-template-columns: minmax(10rem, max-content) 1fr;
+  gap: 0.5rem 1rem;
+  margin: 1.25rem 0;
+}
+
+.professional-experience-card dt::after {
+  content: ":";
+}
+
+.professional-experience-card dt {
+  font-weight: 600;
+}
+
+.professional-experience-card dd {
+  margin: 0;
+}
+
+.professional-experience-description {
+  max-width: 48rem;
+  margin: 0 0 1.25rem;
+  text-align: left;
+  white-space: pre-line;
+}
+
+@media (max-width: 640px) {
+  .professional-experiences-page {
+    padding: 2rem 1rem;
+  }
+
+  .professional-experiences-header {
+    flex-direction: column;
+  }
+
+  .professional-experience-form {
+    padding: 1.25rem;
+  }
+
+  .professional-experience-card-header {
+    flex-direction: column;
+  }
+
+  .professional-experience-card dl {
+    grid-template-columns: 1fr;
+  }
+
+  .professional-experience-card dd {
+    margin-bottom: 0.5rem;
+  }
+}
+.professional-experience-card {
+  text-align: left;
+}
+
+.professional-experience-card-header p {
+  margin: 0.25rem 0 0;
+}
+
+.professional-experience-actions {
+  margin-top: 1.25rem;
+}

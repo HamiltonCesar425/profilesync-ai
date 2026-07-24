@@ -12,6 +12,10 @@ export function QuickActions(): React.JSX.Element {
           Meu Perfil
         </button>
 
+        <button type="button" onClick={() => navigate("/experiences")}>
+          Experiências Profissionais
+        </button>
+
         <button type="button">Projetos</button>
 
         <button type="button">Tecnologias</button>
