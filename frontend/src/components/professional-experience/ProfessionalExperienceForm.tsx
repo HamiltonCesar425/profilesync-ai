@@ -56,6 +56,10 @@ function getInitialFormState(
   };
 }
 
+function getTodayDate(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
 export function ProfessionalExperienceForm({
   experience,
   isSubmitting,
@@ -68,6 +72,8 @@ export function ProfessionalExperienceForm({
   const [validationMessage, setValidationMessage] = useState<string | null>(
     null,
   );
+
+  const today = getTodayDate();
 
   useEffect(() => {
     setFormData(getInitialFormState(experience));
@@ -82,6 +88,8 @@ export function ProfessionalExperienceForm({
       ...currentFormData,
       [field]: value,
     }));
+
+    setValidationMessage(null);
   }
 
   function handleCurrentExperienceChange(checked: boolean): void {
@@ -90,42 +98,60 @@ export function ProfessionalExperienceForm({
       isCurrent: checked,
       endDate: checked ? "" : currentFormData.endDate,
     }));
+
+    setValidationMessage(null);
   }
 
   async function handleSubmit(
-  event: SubmitEvent<HTMLFormElement>,
-): Promise<void> {
-  event.preventDefault();
+    event: SubmitEvent<HTMLFormElement>,
+  ): Promise<void> {
+    event.preventDefault();
 
-  setValidationMessage(null);
+    setValidationMessage(null);
 
-  if (
-    !formData.isCurrent &&
-    formData.endDate &&
-    formData.endDate < formData.startDate
-  ) {
-    setValidationMessage(
-      "A data de término não pode ser anterior à data de início.",
-    );
-    return;
+    if (!formData.startDate) {
+      setValidationMessage("Informe a data de início.");
+      return;
+    }
+
+    if (formData.startDate > today) {
+      setValidationMessage("A data de início não pode estar no futuro.");
+      return;
+    }
+
+    if (!formData.isCurrent && !formData.endDate) {
+      setValidationMessage(
+        "Informe a data de término ou marque a experiência como atual.",
+      );
+      return;
+    }
+
+    if (!formData.isCurrent && formData.endDate > today) {
+      setValidationMessage("A data de término não pode estar no futuro.");
+      return;
+    }
+
+    if (!formData.isCurrent && formData.endDate < formData.startDate) {
+      setValidationMessage(
+        "A data de término não pode ser anterior à data de início.",
+      );
+      return;
+    }
+
+    const payload: ProfessionalExperienceCreate = {
+      company_name: formData.companyName.trim(),
+      position: formData.position.trim(),
+      employment_type: formData.employmentType.trim() || null,
+      work_model: formData.workModel.trim() || null,
+      location: formData.location.trim() || null,
+      description: formData.description.trim() || null,
+      start_date: formData.startDate,
+      end_date: formData.isCurrent ? null : formData.endDate || null,
+      is_current: formData.isCurrent,
+    };
+
+    await onSubmit(payload);
   }
-
-  const payload: ProfessionalExperienceCreate = {
-    company_name: formData.companyName.trim(),
-    position: formData.position.trim(),
-    employment_type: formData.employmentType.trim() || null,
-    work_model: formData.workModel.trim() || null,
-    location: formData.location.trim() || null,
-    description: formData.description.trim() || null,
-    start_date: formData.startDate,
-    end_date: formData.isCurrent
-      ? null
-      : formData.endDate || null,
-    is_current: formData.isCurrent,
-  };
-
-  await onSubmit(payload);
-}
 
   const isEditing = Boolean(experience);
 
@@ -221,6 +247,7 @@ export function ProfessionalExperienceForm({
           type="date"
           value={formData.startDate}
           onChange={(event) => updateField("startDate", event.target.value)}
+          max={today}
           required
           disabled={isSubmitting}
         />
@@ -237,7 +264,7 @@ export function ProfessionalExperienceForm({
             }
             disabled={isSubmitting}
           />
-          
+
           <span>Trabalho atualmente nesta empresa</span>
         </label>
       </div>
@@ -250,6 +277,7 @@ export function ProfessionalExperienceForm({
           value={formData.endDate}
           onChange={(event) => updateField("endDate", event.target.value)}
           min={formData.startDate || undefined}
+          max={today}
           required={!formData.isCurrent}
           disabled={formData.isCurrent || isSubmitting}
         />
@@ -273,7 +301,7 @@ export function ProfessionalExperienceForm({
         />
       </div>
 
-      <div className="professional-experience-field">
+      <div className="professional-experience-form-actions">
         <button
           className="primary-button"
           type="submit"
@@ -286,8 +314,8 @@ export function ProfessionalExperienceForm({
               : "Criar experiência"}
         </button>
 
-        <button 
-          className="secondy-button"
+        <button
+          className="secondary-button"
           type="button"
           onClick={onCancel}
           disabled={isSubmitting}
