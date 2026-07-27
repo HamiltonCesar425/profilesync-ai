@@ -6,6 +6,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ProfessionalExperiencesPage } from "./pages/ProfessionalExperiencesPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { ProjectsPage } from "./pages/ProjectsPage";
 import { RegisterPage } from "./pages/RegisterPage";
 
 export default function App(): React.JSX.Element {
@@ -29,6 +30,7 @@ export default function App(): React.JSX.Element {
         <Route path="/" element={<DashboardPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/experiences" element={<ProfessionalExperiencesPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
