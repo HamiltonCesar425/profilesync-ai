@@ -20,7 +20,9 @@ export function QuickActions(): React.JSX.Element {
           Projetos
         </button>
 
-        <button type="button">Tecnologias</button>
+        <button type="button" onClick={() => navigate("/Technologies")}>
+          Tecnologias
+        </button>
 
         <button type="button">Comparar Vaga</button>
 

@@ -8,6 +8,7 @@ import { ProfessionalExperiencesPage } from "./pages/ProfessionalExperiencesPage
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProjectsPage } from "./pages/ProjectsPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { TechnologiesPage } from "./pages/TechnologiesPage";
 
 export default function App(): React.JSX.Element {
   const { isAuthenticated } = useAuth();
@@ -31,6 +32,7 @@ export default function App(): React.JSX.Element {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/experiences" element={<ProfessionalExperiencesPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/technologies" element={<TechnologiesPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
