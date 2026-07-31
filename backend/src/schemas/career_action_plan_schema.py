@@ -10,7 +10,7 @@ class CareerActionItem(BaseModel):
     )
     title: str = Field(
         min_length=1,
-        description="Título objetivo da ação recomendsada.",
+        description="Título objetivo da ação recomendadas.",
     )
     description: str = Field(
         min_length=1, description="Orientação prática para executar a ação."
@@ -22,7 +22,7 @@ class CareerActionItem(BaseModel):
     )
     estimated_effort: str = Field(
         min_length=1,
-        description="Estimativa qualitativa de esforço para conclir a ação.",
+        description="Estimativa qualitativa de esforço para concluir a ação.",
     )
     category: str = Field(
         min_length=1, description="Categoria profissional associada à ação."
@@ -40,9 +40,9 @@ class CareerActionPlanResponse(BaseModel):
     estimated_score_after_actions: int = Field(
         ge=0,
         le=100,
-        description="Score estimado após a execusão das ações.",
+        description="Score estimado após a execução das ações.",
     )
     actions: list[CareerActionItem] = Field(
         default_factory=list,
-        description="Açoes ordenadas por prioridade e impacto.",
+        description="Ações ordenadas por prioridade e impacto.",
     )

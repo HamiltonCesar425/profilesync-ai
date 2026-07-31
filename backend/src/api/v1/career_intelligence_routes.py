@@ -8,6 +8,7 @@ from repositories.job_repository import JobRepository
 from schemas.career_goal_schema import (
     CareerAnalysisResponse,
     CareerGoalRequest,
+    RegisteredJobAnalysisRequest,
 )
 from services.career_intelligence_service import CareerIntelligenceService
 from services.job_service import JobNotFoundError, JobService
@@ -40,7 +41,7 @@ def analyze_career_goal(
 )
 def analyze_registered_job(
     job_id: int,
-    request: CareerGoalRequest,
+    request: RegisteredJobAnalysisRequest,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> CareerAnalysisResponse:

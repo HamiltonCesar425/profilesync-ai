@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { useAuth } from "./auth/useAuth";
+import { CompareJobPage } from "./pages/CompareJobPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LoginPage } from "./pages/LoginPage";
 import { ProfessionalExperiencesPage } from "./pages/ProfessionalExperiencesPage";
@@ -33,6 +34,7 @@ export default function App(): React.JSX.Element {
         <Route path="/experiences" element={<ProfessionalExperiencesPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/technologies" element={<TechnologiesPage />} />
+        <Route path="/compare-job" element={<CompareJobPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

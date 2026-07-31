@@ -11,6 +11,11 @@ class CareerGoalRequest(BaseModel):
     seniority: str | None = None
 
 
+class RegisteredJobAnalysisRequest(BaseModel):
+    skills: list[str] = Field(default_factory=list)
+    seniority: str | None = None
+
+
 class CareerAnalysisResponse(BaseModel):
     target_role: str
     compatibility_score: int
