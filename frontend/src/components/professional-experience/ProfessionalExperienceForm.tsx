@@ -1,5 +1,7 @@
+import axios from "axios";
 import { type SubmitEvent, useEffect, useState } from "react";
 
+import { improveProfessionalDescription } from "../../api/aiAssistant";
 import type {
   ProfessionalExperience,
   ProfessionalExperienceCreate,
@@ -23,6 +25,11 @@ interface ProfessionalExperienceFormState {
   endDate: string;
   isCurrent: boolean;
 }
+
+type AIFeedback = {
+  type: "success" | "error";
+  message: string;
+};
 
 const EMPTY_FORM_STATE: ProfessionalExperienceFormState = {
   companyName: "",
@@ -72,12 +79,15 @@ export function ProfessionalExperienceForm({
   const [validationMessage, setValidationMessage] = useState<string | null>(
     null,
   );
+  const [isImprovingDescription, setIsImprovingDescription] = useState(false);
+  const [aiFeedback, setAIFeedback] = useState<AIFeedback | null>(null);
 
   const today = getTodayDate();
 
   useEffect(() => {
     setFormData(getInitialFormState(experience));
     setValidationMessage(null);
+    setAIFeedback(null);
   }, [experience]);
 
   function updateField<K extends keyof ProfessionalExperienceFormState>(
@@ -90,6 +100,10 @@ export function ProfessionalExperienceForm({
     }));
 
     setValidationMessage(null);
+
+    if (field === "description") {
+      setAIFeedback(null);
+    }
   }
 
   function handleCurrentExperienceChange(checked: boolean): void {
@@ -102,10 +116,64 @@ export function ProfessionalExperienceForm({
     setValidationMessage(null);
   }
 
+  async function handleImproveDescription(): Promise<void> {
+    const currentDescription = formData.description.trim();
+
+    setAIFeedback(null);
+
+    if (!currentDescription) {
+      setAIFeedback({
+        type: "error",
+        message: "Escreva uma descrição antes de solicitar a melhoria com IA.",
+      });
+      return;
+    }
+
+    try {
+      setIsImprovingDescription(true);
+
+      const improvedDescription =
+        await improveProfessionalDescription(currentDescription);
+
+      setFormData((currentFormData) => ({
+        ...currentFormData,
+        description: improvedDescription,
+      }));
+
+      setAIFeedback({
+        type: "success",
+        message:
+          "Descrição melhorada com sucesso. Revise o conteúdo antes de salvar.",
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const detail = error.response?.data?.detail;
+
+        if (typeof detail === "string") {
+          setAIFeedback({
+            type: "error",
+            message: detail,
+          });
+          return;
+        }
+      }
+      setAIFeedback({
+        type: "error",
+        message: "Não foi possível utilizar a IA neste momento.",
+      });
+    } finally {
+      setIsImprovingDescription(false);
+    }
+  }
+
   async function handleSubmit(
     event: SubmitEvent<HTMLFormElement>,
   ): Promise<void> {
     event.preventDefault();
+
+    if (isImprovingDescription) {
+      return;
+    }
 
     setValidationMessage(null);
 
@@ -154,6 +222,8 @@ export function ProfessionalExperienceForm({
   }
 
   const isEditing = Boolean(experience);
+  const isFormBusy = isSubmitting || isImprovingDescription;
+  const isDescriptionEmpty = !formData.description.trim();
 
   return (
     <form className="professional-experience-form" onSubmit={handleSubmit}>
@@ -173,7 +243,7 @@ export function ProfessionalExperienceForm({
           minLength={2}
           maxLength={200}
           required
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         />
       </div>
 
@@ -187,7 +257,7 @@ export function ProfessionalExperienceForm({
           minLength={2}
           maxLength={150}
           required
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         />
       </div>
 
@@ -199,7 +269,7 @@ export function ProfessionalExperienceForm({
           onChange={(event) =>
             updateField("employmentType", event.target.value)
           }
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         >
           <option value="">Não informado</option>
           <option value="CLT">CLT</option>
@@ -218,7 +288,7 @@ export function ProfessionalExperienceForm({
           id="work-model"
           value={formData.workModel}
           onChange={(event) => updateField("workModel", event.target.value)}
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         >
           <option value="">Não informado</option>
           <option value="Presencial">Presencial</option>
@@ -236,7 +306,7 @@ export function ProfessionalExperienceForm({
           onChange={(event) => updateField("location", event.target.value)}
           maxLength={120}
           placeholder="Ex.: Campinas, SP"
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         />
       </div>
 
@@ -249,7 +319,7 @@ export function ProfessionalExperienceForm({
           onChange={(event) => updateField("startDate", event.target.value)}
           max={today}
           required
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         />
       </div>
 
@@ -262,7 +332,7 @@ export function ProfessionalExperienceForm({
             onChange={(event) =>
               handleCurrentExperienceChange(event.target.checked)
             }
-            disabled={isSubmitting}
+            disabled={isFormBusy}
           />
 
           <span>Trabalho atualmente nesta empresa</span>
@@ -279,7 +349,7 @@ export function ProfessionalExperienceForm({
           min={formData.startDate || undefined}
           max={today}
           required={!formData.isCurrent}
-          disabled={formData.isCurrent || isSubmitting}
+          disabled={formData.isCurrent || isFormBusy}
         />
       </div>
 
@@ -296,17 +366,36 @@ export function ProfessionalExperienceForm({
           value={formData.description}
           onChange={(event) => updateField("description", event.target.value)}
           rows={6}
-          disabled={isSubmitting}
+          disabled={isFormBusy}
           placeholder="Descreva suas principais responsabilidades, entregas e resultados."
         />
+
+        <button
+          className="secondary-button"
+          type="button"
+          onClick={handleImproveDescription}
+          disabled={isFormBusy || isDescriptionEmpty}
+          aria-describedby="ai-description-feedback"
+        >
+          {isImprovingDescription
+            ? "Melhorando descrição..."
+            : "Melhorar com IA"}
+        </button>
+
+        {aiFeedback && (
+          <p
+            id="ai-description-feedback"
+            className={`feedback-message feedback-message-${aiFeedback.type}`}
+            role={aiFeedback.type === "error" ? "alert" : "status"}
+            aria-live="polite"
+          >
+            {aiFeedback.message}
+          </p>
+        )}
       </div>
 
       <div className="professional-experience-form-actions">
-        <button
-          className="primary-button"
-          type="submit"
-          disabled={isSubmitting}
-        >
+        <button className="primary-button" type="submit" disabled={isFormBusy}>
           {isSubmitting
             ? "Salvando..."
             : isEditing
@@ -318,7 +407,7 @@ export function ProfessionalExperienceForm({
           className="secondary-button"
           type="button"
           onClick={onCancel}
-          disabled={isSubmitting}
+          disabled={isFormBusy}
         >
           Cancelar
         </button>
