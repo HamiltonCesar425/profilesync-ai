@@ -32,4 +32,7 @@ DATABASE_FILE = DATA_DIR / "profilesync.db"
 
 DATA_DIR.mkdir(exist_ok=True)
 
-DATABASE_URL = f"sqlite:///{DATABASE_FILE.as_posix()}"
+DATABASE_URL = os.getenv(
+    "PROFILESYNC_DATABASE_URL",
+    f"sqlite:///{DATABASE_FILE.as_posix()}",
+)

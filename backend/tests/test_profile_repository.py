@@ -1,15 +1,10 @@
 import pytest
 
-from database import Base, engine, SessionLocal
+from database import SessionLocal
 from repositories.profile_repository import ProfileRepository
 
 
 TEST_USER_ID = 1
-
-
-def setup_function() -> None:
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
 
 
 @pytest.fixture
