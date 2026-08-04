@@ -1,6 +1,10 @@
 export interface RegisteredJobAnalysisRequest {
-  skills: string[];
-  seniority?: string | null;
+  profile_id: number;
+}
+
+export interface DetectedCompetenciesResponse {
+  profile_id: number;
+  competencies: string[];
 }
 
 export interface ImpactRecommendation {

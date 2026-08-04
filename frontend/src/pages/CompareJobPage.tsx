@@ -1,10 +1,15 @@
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { analyzeRegisteredJob } from "../api/careerIntelligence";
+import {
+  analyzeRegisteredJob,
+  getDetectedCompetencies,
+} from "../api/careerIntelligence";
 import { createJob, listJobs } from "../api/jobs";
+import { listProfiles } from "../api/profiles";
 import type { CareerAnalysis } from "../types/careerAnalysis";
 import type { Job, JobCreate } from "../types/job";
+import type { Profile } from "../types/profile";
 
 const INITIAL_JOB_FORM: JobCreate = {
   title: "",
@@ -18,27 +23,38 @@ export function CompareJobPage(): React.JSX.Element {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
 
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [selectedProfileId, setSelectedProfileId] = useState<number | null>(
+    null,
+  );
+  const [detectedCompetencies, setDetectedCompetencies] = useState<string[]>(
+    [],
+  );
+
   const [jobForm, setJobForm] = useState<JobCreate>(INITIAL_JOB_FORM);
-  const [skillsInput, setSkillsInput] = useState("");
-  const [seniority, setSeniority] = useState("");
 
   const [analysis, setAnalysis] = useState<CareerAnalysis | null>(null);
 
-  const [isLoadingJobs, setIsLoadingJobs] = useState(true);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isLoadingCompetencies, setIsLoadingCompetencies] = useState(false);
   const [isCreatingJob, setIsCreatingJob] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const loadJobs = useCallback(async () => {
-    setIsLoadingJobs(true);
+  const loadComparisonData = useCallback(async () => {
+    setIsLoadingData(true);
     setErrorMessage("");
 
     try {
-      const registeredJobs = await listJobs();
+      const [registeredJobs, registeredProfiles] = await Promise.all([
+        listJobs(),
+        listProfiles(),
+      ]);
 
       setJobs(registeredJobs);
+      setProfiles(registeredProfiles);
       setSelectedJobId((currentJobId) => {
         if (
           currentJobId &&
@@ -49,16 +65,62 @@ export function CompareJobPage(): React.JSX.Element {
 
         return registeredJobs[0]?.id ?? null;
       });
+      setSelectedProfileId((currentProfileId) => {
+        if (
+          currentProfileId &&
+          registeredProfiles.some(
+            (profile) => profile.id === currentProfileId,
+          )
+        ) {
+          return currentProfileId;
+        }
+
+        return registeredProfiles[0]?.id ?? null;
+      });
     } catch {
-      setErrorMessage("Não foi possível carregar as vagas cadastradas.");
+      setErrorMessage("Não foi possível carregar vagas e perfis cadastrados.");
     } finally {
-      setIsLoadingJobs(false);
+      setIsLoadingData(false);
     }
   }, []);
 
   useEffect(() => {
-    void loadJobs();
-  }, [loadJobs]);
+    void loadComparisonData();
+  }, [loadComparisonData]);
+
+  useEffect(() => {
+    if (selectedProfileId === null) {
+      setDetectedCompetencies([]);
+      return;
+    }
+
+    let isCurrentRequest = true;
+    setIsLoadingCompetencies(true);
+
+    void getDetectedCompetencies(selectedProfileId)
+      .then((response) => {
+        if (isCurrentRequest) {
+          setDetectedCompetencies(response.competencies);
+        }
+      })
+      .catch(() => {
+        if (isCurrentRequest) {
+          setDetectedCompetencies([]);
+          setErrorMessage(
+            "Não foi possível detectar as competências do perfil.",
+          );
+        }
+      })
+      .finally(() => {
+        if (isCurrentRequest) {
+          setIsLoadingCompetencies(false);
+        }
+      });
+
+    return () => {
+      isCurrentRequest = false;
+    };
+  }, [selectedProfileId]);
 
   function handleJobFormChange(field: keyof JobCreate, value: string): void {
     setJobForm((currentForm) => ({
@@ -121,18 +183,10 @@ export function CompareJobPage(): React.JSX.Element {
       return;
     }
 
-    const skills = skillsInput
-      .split(",")
-      .map((skill) => skill.trim())
-      .filter(
-        (skill, index, currentSkills) =>
-          skill.length > 0 &&
-          currentSkills.findIndex(
-            (currentSkill) =>
-              currentSkill.toLocaleLowerCase("pt-BR") ===
-              skill.toLocaleLowerCase("pt-BR"),
-          ) === index,
-      );
+    if (!selectedProfileId) {
+      setErrorMessage("Selecione ou cadastre um perfil antes de analisar.");
+      return;
+    }
 
     setIsAnalyzing(true);
     setErrorMessage("");
@@ -141,8 +195,7 @@ export function CompareJobPage(): React.JSX.Element {
 
     try {
       const result = await analyzeRegisteredJob(selectedJobId, {
-        skills,
-        seniority: seniority.trim() || null,
+        profile_id: selectedProfileId,
       });
 
       setAnalysis(result);
@@ -279,20 +332,49 @@ export function CompareJobPage(): React.JSX.Element {
           </div>
 
           <p>
-            Informe suas competências separadas por vírgulas e escolha a vaga
-            que será analisada.
+            Escolha o perfil e a vaga. As competências cadastradas e detectadas
+            serão reutilizadas automaticamente na análise.
           </p>
         </div>
 
-        {isLoadingJobs ? (
+        {isLoadingData ? (
           <p className="compare-job-empty-state">Carregando vagas...</p>
         ) : jobs.length === 0 ? (
           <div className="compare-job-empty-state">
             <h3>Nenhuma vaga cadastrada</h3>
             <p>Cadastre uma vaga acima para iniciar a comparação.</p>
           </div>
+        ) : profiles.length === 0 ? (
+          <div className="compare-job-empty-state">
+            <h3>Nenhum perfil cadastrado</h3>
+            <p>
+              Cadastre seu perfil, experiências, projetos e tecnologias antes
+              de iniciar a comparação.
+            </p>
+          </div>
         ) : (
           <form className="compare-job-form" onSubmit={handleAnalyzeJob}>
+            <div className="compare-job-field">
+              <label htmlFor="comparison-profile">Perfil profissional</label>
+
+              <select
+                id="comparison-profile"
+                value={selectedProfileId ?? ""}
+                disabled={isAnalyzing || isLoadingCompetencies}
+                onChange={(event) => {
+                  setSelectedProfileId(Number(event.target.value));
+                  setAnalysis(null);
+                  setSuccessMessage("");
+                }}
+              >
+                {profiles.map((profile) => (
+                  <option key={profile.id} value={profile.id}>
+                    {profile.full_name} — {profile.professional_title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="compare-job-field">
               <label htmlFor="registered-job">Vaga cadastrada</label>
 
@@ -325,44 +407,38 @@ export function CompareJobPage(): React.JSX.Element {
               </article>
             )}
 
-            <div className="compare-job-field">
-              <label htmlFor="candidate-skills">Suas competências</label>
+            <section className="detected-competencies" aria-live="polite">
+              <h3>Competências detectadas</h3>
 
-              <textarea
-                id="candidate-skills"
-                value={skillsInput}
-                disabled={isAnalyzing}
-                onChange={(event) => setSkillsInput(event.target.value)}
-                placeholder="Ex.: Python, FastAPI, SQL, Docker, Git"
-              />
-
-              <small>
-                Separe cada competência por vírgula. Competências repetidas
-                serão removidas automaticamente.
-              </small>
-            </div>
-
-            <div className="compare-job-field">
-              <label htmlFor="candidate-seniority">Senioridade</label>
-
-              <select
-                id="candidate-seniority"
-                value={seniority}
-                disabled={isAnalyzing}
-                onChange={(event) => setSeniority(event.target.value)}
-              >
-                <option value="">Não informar</option>
-                <option value="Júnior">Júnior</option>
-                <option value="Pleno">Pleno</option>
-                <option value="Sênior">Sênior</option>
-              </select>
-            </div>
+              {isLoadingCompetencies ? (
+                <p>Detectando competências do perfil...</p>
+              ) : detectedCompetencies.length > 0 ? (
+                <ul>
+                  {detectedCompetencies.map((competency) => (
+                    <li key={competency.toLocaleLowerCase("pt-BR")}>
+                      {competency}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>
+                  Nenhuma competência detectada. Cadastre tecnologias ou
+                  detalhe suas experiências e projetos.
+                </p>
+              )}
+            </section>
 
             <div className="compare-job-form-actions">
               <button
                 className="primary-button"
                 type="submit"
-                disabled={isAnalyzing || !selectedJobId}
+                disabled={
+                  isAnalyzing ||
+                  isLoadingCompetencies ||
+                  !selectedJobId ||
+                  !selectedProfileId ||
+                  detectedCompetencies.length === 0
+                }
               >
                 {isAnalyzing ? "Analisando..." : "Comparar com a vaga"}
               </button>

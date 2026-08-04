@@ -1,4 +1,5 @@
 import { httpClient } from "./httpClient";
+import { getDetectedCompetencies } from "./careerIntelligence";
 
 export interface ProfileResponse {
   id: number;
@@ -42,10 +43,13 @@ export interface CareerActionPlanResponse {
   actions: CareerActionItem[];
 }
 
+export type RecommendationPriority = "high" | "medium" | "low";
+
 export interface ImpactRecommendation {
-  title: string;
-  description: string;
+  skill: string;
+  priority: RecommendationPriority;
   impact_score: number;
+  reason: string;
 }
 
 export interface CareerGoalRequest {
@@ -82,7 +86,7 @@ export interface DashboardData {
   careerAnalysis: CareerAnalysisResponse | null;
 
   profileScore: number;
-  recommendations: string[];
+  recommendations: ImpactRecommendation[];
   actions: string[];
 }
 
@@ -182,12 +186,12 @@ async function getProfileDiagnosis(
 
 async function getCareerAnalysis(
   profile: ProfileResponse,
-  technologies: TechnologyResponse[],
+  competencies: string[],
 ): Promise<CareerAnalysisResponse> {
   const request: CareerGoalRequest = {
     target_role: profile.professional_title,
     description: profile.summary || null,
-    skills: technologies.map((technology) => technology.name),
+    skills: competencies,
     seniority: null,
   };
 
@@ -207,15 +211,17 @@ async function loadDashboardData(): Promise<DashboardData> {
     return EMPTY_DASHBOARD_DATA;
   }
 
-  const [technologies, projects, experiences] = await Promise.all([
-    getProfileTechnologies(profile.id),
-    getProfileProjects(profile.id),
-    getProfileExperiences(profile.id),
-  ]);
+  const [technologies, projects, experiences, detectedCompetencies] =
+    await Promise.all([
+      getProfileTechnologies(profile.id),
+      getProfileProjects(profile.id),
+      getProfileExperiences(profile.id),
+      getDetectedCompetencies(profile.id),
+    ]);
 
   const [profileDiagnosis, careerAnalysis] = await Promise.all([
     getProfileDiagnosis(profile),
-    getCareerAnalysis(profile, technologies),
+    getCareerAnalysis(profile, detectedCompetencies.competencies),
   ]);
 
   return {
@@ -237,7 +243,7 @@ async function loadDashboardData(): Promise<DashboardData> {
     careerAnalysis,
 
     profileScore: profileDiagnosis.score,
-    recommendations: profileDiagnosis.recommendations,
+    recommendations: careerAnalysis.recommendations,
     actions: careerAnalysis.action_plan.actions.map((action) => action.title),
   };
 }

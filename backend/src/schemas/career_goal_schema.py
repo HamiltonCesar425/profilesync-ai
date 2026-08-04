@@ -12,8 +12,12 @@ class CareerGoalRequest(BaseModel):
 
 
 class RegisteredJobAnalysisRequest(BaseModel):
-    skills: list[str] = Field(default_factory=list)
-    seniority: str | None = None
+    profile_id: int = Field(gt=0)
+
+
+class DetectedCompetenciesResponse(BaseModel):
+    profile_id: int
+    competencies: list[str] = Field(default_factory=list)
 
 
 class CareerAnalysisResponse(BaseModel):

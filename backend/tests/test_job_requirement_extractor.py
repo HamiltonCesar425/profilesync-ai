@@ -41,3 +41,13 @@ def test_extract_ignore_case():
         "docker",
         "python",
     ]
+
+
+def test_extract_normalizes_aliases():
+    extractor = JobRequirementExtractor()
+
+    result = extractor.extract(
+        "Experiência com NodeJS, REST API e testes automatizados."
+    )
+
+    assert result == ["api rest", "node.js", "tests"]

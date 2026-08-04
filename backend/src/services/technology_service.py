@@ -16,12 +16,11 @@ class TechnologyService:
         self.technology_repository = technology_repository
         self.profile_repository = profile_repository
 
-    def create_technology(
+    def _validate_profile_owner(
         self,
         profile_id: int,
         user_id: int,
-        technology_data: TechnologyCreate,
-    ) -> TechnologyModel:
+    ) -> None:
         profile = self.profile_repository.get_by_id_and_user_id(
             profile_id=profile_id,
             user_id=user_id,
@@ -29,6 +28,17 @@ class TechnologyService:
 
         if profile is None:
             raise DomainError("Profile not found")
+
+    def create_technology(
+        self,
+        profile_id: int,
+        user_id: int,
+        technology_data: TechnologyCreate,
+    ) -> TechnologyModel:
+        self._validate_profile_owner(
+            profile_id=profile_id,
+            user_id=user_id,
+        )
 
         return self.technology_repository.create(
             profile_id=profile_id,
@@ -40,13 +50,10 @@ class TechnologyService:
         profile_id: int,
         user_id: int,
     ) -> list[TechnologyModel]:
-        profile = self.profile_repository.get_by_id_and_user_id(
+        self._validate_profile_owner(
             profile_id=profile_id,
             user_id=user_id,
         )
-
-        if profile is None:
-            raise DomainError("Profile not found")
 
         return self.technology_repository.list_by_profile_id(
             profile_id=profile_id,

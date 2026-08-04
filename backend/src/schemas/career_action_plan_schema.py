@@ -10,7 +10,7 @@ class CareerActionItem(BaseModel):
     )
     title: str = Field(
         min_length=1,
-        description="Título objetivo da ação recomendadas.",
+        description="Título objetivo da ação recomendada.",
     )
     description: str = Field(
         min_length=1, description="Orientação prática para executar a ação."
