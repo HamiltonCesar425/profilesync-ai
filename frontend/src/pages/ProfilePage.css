@@ -1,0 +1,124 @@
+.profile-page {
+  display: block;
+  width: 100%;
+  max-width: var(--content-max-width);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 3.5rem 2rem;
+  text-align: left;
+}
+
+.profile-page--loading {
+  display: grid;
+  place-content: center;
+  text-align: center;
+}
+
+.profile-page__loading {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.profile-page__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.profile-page__heading {
+  min-width: 0;
+}
+
+.profile-page__eyebrow {
+  max-width: none;
+  margin: 0 0 0.75rem;
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.profile-page h1 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.profile-page__description {
+  max-width: 44rem;
+  margin: 1rem 0 0;
+  color: var(--color-text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.profile-page__back-link {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.profile-page__back-link:hover {
+  border-color: #94a3b8;
+  background-color: var(--color-surface-subtle);
+}
+
+.profile-page__feedback {
+  max-width: none;
+  margin: 2rem 0 -0.5rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.profile-page__feedback--error {
+  border-color: #fca5a5;
+  color: var(--color-danger);
+  background-color: var(--color-danger-soft);
+}
+
+.profile-page__feedback--success {
+  border-color: #86efac;
+  color: var(--color-success);
+  background-color: var(--color-success-soft);
+}
+
+@media (max-width: 720px) {
+  .profile-page {
+    padding: 2rem 1rem;
+  }
+
+  .profile-page__header {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .profile-page__back-link {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-page__back-link {
+    transition: none;
+  }
+}

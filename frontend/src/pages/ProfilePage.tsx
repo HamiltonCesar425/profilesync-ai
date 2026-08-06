@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { createProfile, listProfiles, updateProfile } from "../api/profiles";
 import { ProfileForm } from "../components/profile/ProfileForm";
 import type { Profile, ProfilePayload } from "../types/profile";
+import "./ProfilePage.css";
 
 function getApiErrorMessage(error: unknown): string {
   if (!axios.isAxiosError(error)) {
@@ -98,30 +99,48 @@ export function ProfilePage() {
 
   if (isLoading) {
     return (
-      <main>
-        <p role="status">Carregando perfil...</p>
+      <main className="profile-page profile-page--loading">
+        <p className="profile-page__loading" role="status">
+          Carregando perfil...
+        </p>
       </main>
     );
   }
 
   return (
-    <main>
-      <header>
-        <div>
-          <p>ProfileSync AI</p>
+    <main className="profile-page">
+      <header className="profile-page__header">
+        <div className="profile-page__heading">
+          <p className="profile-page__eyebrow">ProfileSync AI</p>
           <h1>{profile ? "Editar perfil" : "Criar perfil"}</h1>
-          <p>
+          <p className="profile-page__description">
             Cadastre suas informações profissionais para alimentar as análises e
             recomendações da plataforma.
           </p>
         </div>
 
-        <Link to="/dashboard">Voltar ao Dashboard</Link>
+        <Link className="profile-page__back-link" to="/dashboard">
+          Voltar ao Dashboard
+        </Link>
       </header>
 
-      {errorMessage && <p role="alert">{errorMessage}</p>}
+      {errorMessage && (
+        <p
+          className="profile-page__feedback profile-page__feedback--error"
+          role="alert"
+        >
+          {errorMessage}
+        </p>
+      )}
 
-      {successMessage && <p role="status">{successMessage}</p>}
+      {successMessage && (
+        <p
+          className="profile-page__feedback profile-page__feedback--success"
+          role="status"
+        >
+          {successMessage}
+        </p>
+      )}
 
       <ProfileForm
         profile={profile}

@@ -1,6 +1,7 @@
 import { type SubmitEvent, useEffect, useState } from "react";
 
 import type { Profile, ProfilePayload } from "../../types/profile";
+import "./ProfileForm.css";
 
 interface ProfileFormProps {
   profile: Profile | null;
@@ -89,8 +90,8 @@ export function ProfileForm({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
+    <form className="profile-form" onSubmit={handleSubmit}>
+      <div className="profile-form__field">
         <label htmlFor="full_name">Nome completo</label>
         <input
           id="full_name"
@@ -104,7 +105,7 @@ export function ProfileForm({
         />
       </div>
 
-      <div>
+      <div className="profile-form__field">
         <label htmlFor="professional_title">Título profissional</label>
         <input
           id="professional_title"
@@ -120,7 +121,7 @@ export function ProfileForm({
         />
       </div>
 
-      <div>
+      <div className="profile-form__field profile-form__field--wide">
         <label htmlFor="summary">Resumo profissional</label>
         <textarea
           id="summary"
@@ -133,7 +134,7 @@ export function ProfileForm({
         />
       </div>
 
-      <div>
+      <div className="profile-form__field profile-form__field--wide">
         <label htmlFor="location">Localização</label>
         <input
           id="location"
@@ -145,7 +146,7 @@ export function ProfileForm({
         />
       </div>
 
-      <div>
+      <div className="profile-form__field">
         <label htmlFor="linkedin_url">LinkedIn</label>
         <input
           id="linkedin_url"
@@ -157,7 +158,7 @@ export function ProfileForm({
         />
       </div>
 
-      <div>
+      <div className="profile-form__field">
         <label htmlFor="github_url">GitHub</label>
         <input
           id="github_url"
@@ -169,15 +170,21 @@ export function ProfileForm({
         />
       </div>
 
-      {errorMessage && <p role="alert">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="profile-form__error" role="alert">
+          {errorMessage}
+        </p>
+      )}
 
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting
-          ? "Salvando..."
-          : profile
-            ? "Atualizar perfil"
-            : "Criar perfil"}
-      </button>
+      <div className="profile-form__actions">
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? "Salvando..."
+            : profile
+              ? "Atualizar perfil"
+              : "Criar perfil"}
+        </button>
+      </div>
     </form>
   );
 }
