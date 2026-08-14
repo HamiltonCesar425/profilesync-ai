@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 
 import { createProfile, listProfiles, updateProfile } from "../api/profiles";
 import { ProfileForm } from "../components/profile/ProfileForm";
+import { ProfileInfoPanel } from "../components/profile/ProfileInfoPanel";
+
 import type { Profile, ProfilePayload } from "../types/profile";
 import "./ProfilePage.css";
 
@@ -142,11 +144,15 @@ export function ProfilePage() {
         </p>
       )}
 
-      <ProfileForm
-        profile={profile}
-        isSubmitting={isSubmitting}
-        onSubmit={handleSubmit}
-      />
+      <div className="profile-page__content">
+        <ProfileForm
+          profile={profile}
+          isSubmitting={isSubmitting}
+          onSubmit={handleSubmit}
+        />
+
+        <ProfileInfoPanel />
+      </div>
     </main>
   );
 }
