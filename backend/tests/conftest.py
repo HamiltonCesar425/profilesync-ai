@@ -17,13 +17,13 @@ os.environ["PROFILESYNC_DATABASE_URL"] = (
     f"sqlite:///{TEST_DATABASE_FILE.as_posix()}"
 )
 
-import pytest
-from sqlalchemy.orm import Session
+import pytest  # noqa: E402
+from sqlalchemy.orm import Session  # noqa: E402
 
-from database import Base, SessionLocal, engine
-from core.login_rate_limiter import login_rate_limiter
-from core.security import create_access_token
-from models.user_model import User
+from database import Base, SessionLocal, engine  # noqa: E402
+from core.login_rate_limiter import login_rate_limiter  # noqa: E402
+from core.security import create_access_token  # noqa: E402
+from models.user_model import User  # noqa: E402
 
 
 def _assert_test_database_is_isolated() -> None:
