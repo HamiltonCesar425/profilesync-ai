@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
+from typing import Literal
 
 
 COMPOSITION_RULESET_VERSION = "targeted-resume-factual-v1"
@@ -76,6 +77,13 @@ class TargetedResumeComposition:
     ruleset_version: str
     blocks: tuple[FactualBlock, ...]
     source_manifest: tuple[SourceReference, ...]
+
+
+@dataclass(frozen=True)
+class TargetedResumePreview:
+    preview_id: str
+    composition: TargetedResumeComposition
+    state: Literal["preview"] = "preview"
 
 
 @dataclass(frozen=True)
