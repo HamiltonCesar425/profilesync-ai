@@ -509,7 +509,9 @@ p {
 
 .compare-job-form-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  gap: 0.75rem;
 }
 
 .compare-job-empty-state {
@@ -722,6 +724,119 @@ p {
   margin: 0;
 }
 
+.targeted-resume-preview {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.targeted-resume-preview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.targeted-resume-preview-header h2,
+.targeted-resume-manifest h3,
+.targeted-resume-provenance h4 {
+  margin: 0;
+}
+
+.targeted-resume-preview-state {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  color: #ffffff;
+  background-color: #374151;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.targeted-resume-metadata {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto auto;
+  gap: 1rem;
+  margin: 0;
+}
+
+.targeted-resume-metadata > div,
+.targeted-resume-fact-list > div {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.targeted-resume-metadata dt,
+.targeted-resume-fact-list dt {
+  color: #4b5563;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.targeted-resume-metadata dd,
+.targeted-resume-fact-list dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.targeted-resume-block-list {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.targeted-resume-block {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.targeted-resume-fact-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.targeted-resume-fact-list > div {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background-color: #f9fafb;
+}
+
+.targeted-resume-provenance,
+.targeted-resume-manifest {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.targeted-resume-provenance ul,
+.targeted-resume-manifest ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.targeted-resume-provenance li,
+.targeted-resume-manifest li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #f9fafb;
+}
+
+.targeted-resume-provenance li span:first-child,
+.targeted-resume-manifest li span:first-child {
+  font-weight: 600;
+}
+
 @media (max-width: 768px) {
   .compare-job-page {
     padding: 2rem 1rem;
@@ -729,7 +844,8 @@ p {
 
   .compare-job-header,
   .compare-job-section-header,
-  .career-analysis-header {
+  .career-analysis-header,
+  .targeted-resume-preview-header {
     flex-direction: column;
   }
 
@@ -739,7 +855,9 @@ p {
 
   .career-analysis-grid,
   .action-plan-score,
-  .action-plan-item dl {
+  .action-plan-item dl,
+  .targeted-resume-metadata,
+  .targeted-resume-fact-list {
     grid-template-columns: 1fr;
   }
 

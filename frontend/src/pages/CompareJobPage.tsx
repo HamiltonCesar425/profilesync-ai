@@ -1,4 +1,11 @@
-import { type FormEvent, useCallback, useEffect, useState } from "react";
+import axios from "axios";
+import {
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -7,9 +14,12 @@ import {
 } from "../api/careerIntelligence";
 import { createJob, listJobs } from "../api/jobs";
 import { listProfiles } from "../api/profiles";
+import { generateTargetedResumePreview } from "../api/targetedResumes";
+import { TargetedResumePreview } from "../components/targeted-resume/TargetedResumePreview";
 import type { CareerAnalysis } from "../types/careerAnalysis";
 import type { Job, JobCreate } from "../types/job";
 import type { Profile } from "../types/profile";
+import type { TargetedResumePreviewResponse } from "../types/targetedResume";
 
 const INITIAL_JOB_FORM: JobCreate = {
   title: "",
@@ -17,8 +27,32 @@ const INITIAL_JOB_FORM: JobCreate = {
   description: "",
 };
 
+function getTargetedResumeErrorMessage(error: unknown): string {
+  if (!axios.isAxiosError(error)) {
+    return "Não foi possível gerar a prévia do currículo.";
+  }
+
+  if (!error.response) {
+    return "Não foi possível comunicar com o servidor para gerar a prévia.";
+  }
+
+  switch (error.response.status) {
+    case 401:
+      return "Sua sessão não é mais válida. Faça login novamente.";
+    case 404:
+      return "As fontes necessárias para a prévia não estão disponíveis.";
+    case 422:
+      return "A solicitação da prévia é inválida. Verifique o perfil e a vaga selecionados.";
+    case 500:
+      return "Ocorreu uma falha interna ao gerar a prévia do currículo.";
+    default:
+      return "Não foi possível gerar a prévia do currículo.";
+  }
+}
+
 export function CompareJobPage(): React.JSX.Element {
   const navigate = useNavigate();
+  const previewRequestRevision = useRef(0);
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
@@ -34,14 +68,31 @@ export function CompareJobPage(): React.JSX.Element {
   const [jobForm, setJobForm] = useState<JobCreate>(INITIAL_JOB_FORM);
 
   const [analysis, setAnalysis] = useState<CareerAnalysis | null>(null);
+  const [targetedResumePreview, setTargetedResumePreview] =
+    useState<TargetedResumePreviewResponse | null>(null);
 
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [isLoadingCompetencies, setIsLoadingCompetencies] = useState(false);
   const [isCreatingJob, setIsCreatingJob] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [previewErrorMessage, setPreviewErrorMessage] = useState("");
+
+  function invalidateTargetedResumePreview(): void {
+    previewRequestRevision.current += 1;
+    setTargetedResumePreview(null);
+    setPreviewErrorMessage("");
+    setIsLoadingPreview(false);
+  }
+
+  useEffect(() => {
+    return () => {
+      previewRequestRevision.current += 1;
+    };
+  }, []);
 
   const loadComparisonData = useCallback(async () => {
     setIsLoadingData(true);
@@ -163,6 +214,7 @@ export function CompareJobPage(): React.JSX.Element {
       });
 
       setJobs((currentJobs) => [createdJob, ...currentJobs]);
+      invalidateTargetedResumePreview();
       setSelectedJobId(createdJob.id);
       setJobForm(INITIAL_JOB_FORM);
       setSuccessMessage("Vaga cadastrada e selecionada com sucesso.");
@@ -206,6 +258,44 @@ export function CompareJobPage(): React.JSX.Element {
       );
     } finally {
       setIsAnalyzing(false);
+    }
+  }
+
+  async function handleGenerateTargetedResumePreview(): Promise<void> {
+    if (selectedProfileId === null || selectedJobId === null) {
+      setPreviewErrorMessage(
+        "Selecione um perfil e uma vaga antes de solicitar a prévia.",
+      );
+      return;
+    }
+
+    const requestRevision = previewRequestRevision.current + 1;
+    previewRequestRevision.current = requestRevision;
+    setIsLoadingPreview(true);
+    setPreviewErrorMessage("");
+    setTargetedResumePreview(null);
+
+    try {
+      const preview = await generateTargetedResumePreview({
+        profile_id: selectedProfileId,
+        job_id: selectedJobId,
+      });
+
+      if (requestRevision !== previewRequestRevision.current) {
+        return;
+      }
+
+      setTargetedResumePreview(preview);
+    } catch (error: unknown) {
+      if (requestRevision !== previewRequestRevision.current) {
+        return;
+      }
+
+      setPreviewErrorMessage(getTargetedResumeErrorMessage(error));
+    } finally {
+      if (requestRevision === previewRequestRevision.current) {
+        setIsLoadingPreview(false);
+      }
     }
   }
 
@@ -362,6 +452,7 @@ export function CompareJobPage(): React.JSX.Element {
                 value={selectedProfileId ?? ""}
                 disabled={isAnalyzing || isLoadingCompetencies}
                 onChange={(event) => {
+                  invalidateTargetedResumePreview();
                   setSelectedProfileId(Number(event.target.value));
                   setAnalysis(null);
                   setSuccessMessage("");
@@ -383,6 +474,7 @@ export function CompareJobPage(): React.JSX.Element {
                 value={selectedJobId ?? ""}
                 disabled={isAnalyzing}
                 onChange={(event) => {
+                  invalidateTargetedResumePreview();
                   setSelectedJobId(Number(event.target.value));
                   setAnalysis(null);
                   setSuccessMessage("");
@@ -430,6 +522,21 @@ export function CompareJobPage(): React.JSX.Element {
 
             <div className="compare-job-form-actions">
               <button
+                className="secondary-button"
+                type="button"
+                disabled={
+                  isLoadingPreview ||
+                  selectedJobId === null ||
+                  selectedProfileId === null
+                }
+                onClick={() => void handleGenerateTargetedResumePreview()}
+              >
+                {isLoadingPreview
+                  ? "Gerando prévia..."
+                  : "Visualizar prévia do currículo"}
+              </button>
+
+              <button
                 className="primary-button"
                 type="submit"
                 disabled={
@@ -446,6 +553,22 @@ export function CompareJobPage(): React.JSX.Element {
           </form>
         )}
       </section>
+
+      {isLoadingPreview && (
+        <p className="page-success-message" role="status" aria-live="polite">
+          Gerando prévia factual do currículo...
+        </p>
+      )}
+
+      {previewErrorMessage && (
+        <p className="page-error-message" role="alert">
+          {previewErrorMessage}
+        </p>
+      )}
+
+      {targetedResumePreview && (
+        <TargetedResumePreview preview={targetedResumePreview} />
+      )}
 
       {analysis && (
         <section
