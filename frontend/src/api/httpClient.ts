@@ -19,6 +19,21 @@ export const httpClient = axios.create({
   },
 });
 
+function getRequestAccessToken(error: unknown): string | null {
+  if (!axios.isAxiosError(error)) {
+    return null;
+  }
+
+  const authorization = error.config?.headers.get("Authorization");
+
+  if (typeof authorization !== "string") {
+    return null;
+  }
+
+  const match = /^Bearer\s+(\S+)$/i.exec(authorization.trim());
+  return match?.[1] ?? null;
+}
+
 httpClient.interceptors.request.use((config) => {
   const accessToken = getAccessToken();
 
@@ -33,7 +48,16 @@ httpClient.interceptors.response.use(
   (response) => response,
   (error: unknown) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      removeAccessToken();
+      const requestAccessToken = getRequestAccessToken(error);
+      const currentAccessToken = getAccessToken();
+
+      if (
+        requestAccessToken &&
+        currentAccessToken &&
+        requestAccessToken === currentAccessToken
+      ) {
+        removeAccessToken("session-invalidated");
+      }
     }
 
     return Promise.reject(error);

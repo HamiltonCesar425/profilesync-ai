@@ -6,8 +6,11 @@ import { useAuth } from "../auth/useAuth";
 interface LoginLocationState {
   from?: {
     pathname: string;
+    search?: string;
+    hash?: string;
   };
   registrationSucceeded?: boolean;
+  sessionInvalidated?: boolean;
 }
 
 export function LoginPage(): React.JSX.Element {
@@ -17,8 +20,11 @@ export function LoginPage(): React.JSX.Element {
   const location = useLocation();
 
   const locationState = location.state as LoginLocationState | null;
-  const destination = locationState?.from?.pathname ?? "/";
+  const destination = locationState?.from
+    ? `${locationState.from.pathname}${locationState.from.search ?? ""}${locationState.from.hash ?? ""}`
+    : "/";
   const registrationSucceeded = locationState?.registrationSucceeded === true;
+  const sessionInvalidated = locationState?.sessionInvalidated === true;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,6 +56,12 @@ export function LoginPage(): React.JSX.Element {
 
       {registrationSucceeded && (
         <p role="status">Conta criada com sucesso. Agora realize o login.</p>
+      )}
+
+      {sessionInvalidated && (
+        <p role="alert">
+          Sua sessão não é mais válida. Entre novamente para continuar.
+        </p>
       )}
 
       <form onSubmit={handleSubmit}>

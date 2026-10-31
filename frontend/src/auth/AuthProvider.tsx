@@ -20,10 +20,15 @@ export function AuthProvider({
   const [accessToken, setAccessTokenState] = useState<string | null>(
     getAccessToken,
   );
+  const [sessionInvalidated, setSessionInvalidated] = useState(false);
 
   useEffect(() => {
-    function syncAccessToken(): void {
+    function syncAccessToken(event: Event): void {
       setAccessTokenState(getAccessToken());
+      setSessionInvalidated(
+        event instanceof CustomEvent &&
+          event.detail?.reason === "session-invalidated",
+      );
     }
 
     window.addEventListener(AUTH_CHANGED_EVENT, syncAccessToken);
@@ -51,10 +56,11 @@ export function AuthProvider({
     () => ({
       accessToken,
       isAuthenticated: accessToken !== null,
+      sessionInvalidated,
       login,
       logout,
     }),
-    [accessToken],
+    [accessToken, sessionInvalidated],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

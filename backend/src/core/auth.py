@@ -29,6 +29,7 @@ def get_current_user(
             token,
             SECRET_KEY,
             algorithms=[ALGORITHM],
+            options={"require": ["exp", "sub"]},
         )
         email = payload.get("sub")
 
