@@ -8,6 +8,7 @@ import {
   listProfileTechnologies,
   updateTechnology,
 } from "../api/technologies";
+import { DashboardBackLink } from "../components/navigation/DashboardBackLink";
 import { TechnologyList } from "../components/technology/TechnologyList";
 import { TechnologyModal } from "../components/technology/TechnologyModal";
 import type { Profile } from "../types/profile";
@@ -180,13 +181,7 @@ export function TechnologiesPage() {
         </div>
 
         <div className="page-header-actions">
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={() => navigate("/")}
-          >
-            Voltar ao dashboard
-          </button>
+          <DashboardBackLink />
 
           <button
             className="primary-button"

@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 import { createProfile, listProfiles, updateProfile } from "../api/profiles";
+import { DashboardBackLink } from "../components/navigation/DashboardBackLink";
 import { ProfileForm } from "../components/profile/ProfileForm";
 import { ProfileInfoPanel } from "../components/profile/ProfileInfoPanel";
 
@@ -102,6 +102,8 @@ export function ProfilePage() {
   if (isLoading) {
     return (
       <main className="profile-page profile-page--loading">
+        <DashboardBackLink />
+
         <p className="profile-page__loading" role="status">
           Carregando perfil...
         </p>
@@ -121,9 +123,7 @@ export function ProfilePage() {
           </p>
         </div>
 
-        <Link className="profile-page__back-link" to="/dashboard">
-          Voltar ao Dashboard
-        </Link>
+        <DashboardBackLink />
       </header>
 
       {errorMessage && (

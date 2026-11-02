@@ -65,28 +65,6 @@
   line-height: 1.7;
 }
 
-.profile-page__back-link {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  min-height: 2.75rem;
-  padding: 0.65rem 1rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-primary);
-  background-color: var(--color-surface);
-  font-weight: 650;
-  text-decoration: none;
-  transition:
-    border-color 160ms ease,
-    background-color 160ms ease;
-}
-
-.profile-page__back-link:hover {
-  border-color: #94a3b8;
-  background-color: var(--color-surface-subtle);
-}
-
 .profile-page__feedback {
   max-width: none;
   margin: 2rem 0 -0.5rem;
@@ -124,15 +102,9 @@
       gap: 1.25rem;
     }
 
-    .profile-page__back-link {
+    .profile-page__header .dashboard-back-link {
       width: 100%;
-      justify-content: center;
     }
-  }
 
-  @media (prefers-reduced-motion: reduce) {
-    .profile-page__back-link {
-      transition: none;
-    }
   }
 }

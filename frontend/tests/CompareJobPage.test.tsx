@@ -6,7 +6,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
@@ -93,8 +93,11 @@ function preview(previewId: string, jobId: number): TargetedResumePreviewRespons
 
 async function renderReadyPage() {
   const rendered = render(
-    <MemoryRouter>
-      <CompareJobPage />
+    <MemoryRouter initialEntries={["/compare-job"]}>
+      <Routes>
+        <Route path="/compare-job" element={<CompareJobPage />} />
+        <Route path="/" element={<h1>Dashboard alcançado</h1>} />
+      </Routes>
     </MemoryRouter>,
   );
 
@@ -327,6 +330,28 @@ describe("CompareJobPage asynchronous preview robustness", () => {
     await act(async () => {
       requestA.reject(new Error("erro após desmontagem"));
       await flushPromiseCallbacks();
+    });
+
+    expect(stateUpdateTracker.calls).toEqual([]);
+  });
+
+  it("navigates safely to the Dashboard while a preview request is pending", async () => {
+    const requestA = deferred<TargetedResumePreviewResponse>();
+    vi.mocked(generateTargetedResumePreview).mockReturnValueOnce(requestA.promise);
+    await renderReadyPage();
+
+    startPreviewRequest();
+    fireEvent.click(
+      screen.getByRole("link", { name: "Voltar ao Dashboard" }),
+    );
+    expect(
+      screen.getByRole("heading", { name: "Dashboard alcançado" }),
+    ).toBeTruthy();
+    stateUpdateTracker.afterUnmount = true;
+
+    await act(async () => {
+      requestA.resolve(preview("preview-after-navigation", 5));
+      await requestA.promise;
     });
 
     expect(stateUpdateTracker.calls).toEqual([]);

@@ -51,12 +51,41 @@ p {
   margin-bottom: 2rem;
 }
 
-.professional-experiences-header > div {
+.professional-experiences-header > div:first-child {
   flex: 1;
 }
 
 .professional-experiences-header p {
   margin-top: 0.75rem;
+}
+
+.page-header,
+.projects-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.page-header > div:first-child,
+.projects-header > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-header > div:first-child > p:last-child,
+.projects-header > div:first-child > p:last-child {
+  margin-top: 0.75rem;
+}
+
+.page-header-actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
 }
 
 .professional-experiences-profile-selector {
@@ -173,6 +202,18 @@ p {
   border: 1px solid #d1d5db;
   color: #111827;
   background-color: #ffffff;
+}
+
+.dashboard-back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .primary-button:disabled,
@@ -838,6 +879,16 @@ p {
 }
 
 @media (max-width: 768px) {
+  .page-header,
+  .projects-header {
+    flex-direction: column;
+  }
+
+  .page-header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
   .compare-job-page {
     padding: 2rem 1rem;
   }

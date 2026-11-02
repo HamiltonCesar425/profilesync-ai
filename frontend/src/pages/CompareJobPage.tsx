@@ -6,7 +6,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { useNavigate } from "react-router-dom";
 
 import {
   analyzeRegisteredJob,
@@ -15,6 +14,7 @@ import {
 import { createJob, listJobs } from "../api/jobs";
 import { listProfiles } from "../api/profiles";
 import { generateTargetedResumePreview } from "../api/targetedResumes";
+import { DashboardBackLink } from "../components/navigation/DashboardBackLink";
 import { TargetedResumePreview } from "../components/targeted-resume/TargetedResumePreview";
 import type { CareerAnalysis } from "../types/careerAnalysis";
 import type { Job, JobCreate } from "../types/job";
@@ -51,7 +51,6 @@ function getTargetedResumeErrorMessage(error: unknown): string {
 }
 
 export function CompareJobPage(): React.JSX.Element {
-  const navigate = useNavigate();
   const previewRequestRevision = useRef(0);
 
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -316,13 +315,7 @@ export function CompareJobPage(): React.JSX.Element {
         </div>
 
         <div className="page-header-actions">
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={() => navigate("/")}
-          >
-            Voltar ao dashboard
-          </button>
+          <DashboardBackLink />
         </div>
       </header>
 

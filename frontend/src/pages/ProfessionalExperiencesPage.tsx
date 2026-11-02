@@ -8,6 +8,7 @@ import {
   updateProfessionalExperience,
 } from "../api/professionalExperiences";
 import { listProfiles } from "../api/profiles";
+import { DashboardBackLink } from "../components/navigation/DashboardBackLink";
 import { ProfessionalExperienceForm } from "../components/professional-experience/ProfessionalExperienceForm";
 import type {
   ProfessionalExperience,
@@ -246,6 +247,8 @@ export function ProfessionalExperiencesPage() {
   if (isLoadingProfiles) {
     return (
       <main className="professional-experiences-page">
+        <DashboardBackLink />
+
         <p>Carregando perfis...</p>
       </main>
     );
@@ -254,6 +257,8 @@ export function ProfessionalExperiencesPage() {
   if (profiles.length === 0) {
     return (
       <main>
+        <DashboardBackLink />
+
         <h1>Experiências profissionais</h1>
 
         <p>
@@ -275,17 +280,21 @@ export function ProfessionalExperiencesPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleCreateClick}
-          disabled={
-            selectedProfileId === null ||
-            isSubmitting ||
-            deletingExperienceId !== null
-          }
-        >
-          Nova experiência
-        </button>
+        <div className="page-header-actions">
+          <DashboardBackLink />
+
+          <button
+            type="button"
+            onClick={handleCreateClick}
+            disabled={
+              selectedProfileId === null ||
+              isSubmitting ||
+              deletingExperienceId !== null
+            }
+          >
+            Nova experiência
+          </button>
+        </div>
       </header>
 
       {profiles.length > 1 && (

@@ -7,6 +7,7 @@ import {
   getProjectsByProfile,
   updateProject,
 } from "../api/projects";
+import { DashboardBackLink } from "../components/navigation/DashboardBackLink";
 import { ProjectForm } from "../components/project/ProjectForm";
 import { ProjectList } from "../components/project/ProjectList";
 import type { Profile } from "../types/profile";
@@ -237,6 +238,8 @@ export function ProjectsPage() {
   if (isLoadingProfiles) {
     return (
       <main className="projects-page">
+        <DashboardBackLink />
+
         <p>Carregando perfis...</p>
       </main>
     );
@@ -245,6 +248,8 @@ export function ProjectsPage() {
   if (profiles.length === 0) {
     return (
       <main className="projects-page">
+        <DashboardBackLink />
+
         <h1>Projetos</h1>
 
         {errorMessage && (
@@ -270,17 +275,22 @@ export function ProjectsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleCreateClick}
-          disabled={
-            selectedProfileId === null ||
-            isSubmitting ||
-            deletingProjectId !== null
-          }
-        >
-          Novo projeto
-        </button>
+        <div className="page-header-actions">
+          <DashboardBackLink />
+
+          <button
+            className="primary-button"
+            type="button"
+            onClick={handleCreateClick}
+            disabled={
+              selectedProfileId === null ||
+              isSubmitting ||
+              deletingProjectId !== null
+            }
+          >
+            Novo projeto
+          </button>
+        </div>
       </header>
 
       {profiles.length > 1 && (
